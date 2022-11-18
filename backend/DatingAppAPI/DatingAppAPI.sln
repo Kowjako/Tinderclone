@@ -5,6 +5,8 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatingAppAPI", "DatingAppAPI\DatingAppAPI.csproj", "{C6A2C344-98EC-4AF6-9212-8DEA985807FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatingAppAPI.Persistence", "DatingAppAPI.Persistence\DatingAppAPI.Persistence.csproj", "{50C33405-0954-4A5B-BD30-AFACB56E04E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{C6A2C344-98EC-4AF6-9212-8DEA985807FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6A2C344-98EC-4AF6-9212-8DEA985807FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C6A2C344-98EC-4AF6-9212-8DEA985807FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50C33405-0954-4A5B-BD30-AFACB56E04E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50C33405-0954-4A5B-BD30-AFACB56E04E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50C33405-0954-4A5B-BD30-AFACB56E04E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50C33405-0954-4A5B-BD30-AFACB56E04E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
