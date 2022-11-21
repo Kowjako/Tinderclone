@@ -8,9 +8,8 @@ import { ToastrService } from 'ngx-toastr'
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-
   constructor(private accService: AccountService, private toastr: ToastrService) {}
-
+  
   canActivate(): Observable<boolean> {
     return this.accService.currentUser$.pipe(
       map(user => {
@@ -19,5 +18,4 @@ export class AuthGuard implements CanActivate {
       })
     );
   }
-  
 }
