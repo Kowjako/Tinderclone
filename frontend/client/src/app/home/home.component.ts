@@ -8,13 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
   registerMode = false;
-  users: any;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor() { }
 
   ngOnInit(): void 
   {
-    this.getUsers();
   }
 
   registerToggle()
@@ -22,13 +20,8 @@ export class HomeComponent implements OnInit {
     this.registerMode = !this.registerMode;
   }
 
-  getUsers()
+  cancelRegisterMode(event: boolean)
   {
-    this.httpClient.get('https://localhost:5001/api/Users').subscribe(
-      {
-        next: response => this.users = response,
-        error: err => console.log(err)
-      }
-    );
+    this.registerMode = event;
   }
 }
