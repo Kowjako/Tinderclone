@@ -1,4 +1,5 @@
 using DatingAppAPI.Extensions;
+using DatingAppAPI.Middlewares;
 using DatingAppAPI.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigurePersistence(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.ConfigureIdentity(builder.Configuration);
+builder.Services.RegisterMiddlewares(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -21,11 +23,13 @@ var app = builder.Build();
 
 /* Http Request Pipeline */
 
-if (app.Environment.IsDevelopment())
+if(app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
