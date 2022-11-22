@@ -1,5 +1,5 @@
 ﻿using DatingAppAPI.Interfaces;
-using DatingAppAPI.Persistance.Entities;
+using DatingAppAPI.Persistence.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;

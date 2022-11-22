@@ -1,7 +1,7 @@
 ﻿using DatingAppAPI.DTO;
 using DatingAppAPI.Interfaces;
-using DatingAppAPI.Persistance.Data;
-using DatingAppAPI.Persistance.Entities;
+using DatingAppAPI.Persistence.Data;
+using DatingAppAPI.Persistence.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;

@@ -1,4 +1,6 @@
-﻿namespace DatingAppAPI.Persistance.Entities
+﻿using DatingAppAPI.Persistence.Extensions;
+
+namespace DatingAppAPI.Persistence.Entities
 {
     public class AppUser
     {
@@ -31,5 +33,11 @@
         public string Country { get; set; }
 
         public ICollection<Photo> Photos { get; set; }
+
+        public int GetAge()
+        {
+            return DateOfBirth.CalculateAge();
+        }
+
     }
 }

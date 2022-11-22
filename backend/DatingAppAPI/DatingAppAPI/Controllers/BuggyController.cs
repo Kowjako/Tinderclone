@@ -1,5 +1,5 @@
-﻿using DatingAppAPI.Persistance.Data;
-using DatingAppAPI.Persistance.Entities;
+﻿using DatingAppAPI.Persistence.Data;
+using DatingAppAPI.Persistence.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

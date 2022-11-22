@@ -1,7 +1,7 @@
-﻿using DatingAppAPI.Persistance.Entities;
+﻿using DatingAppAPI.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DatingAppAPI.Persistance.Data
+namespace DatingAppAPI.Persistence.Data
 {
     public class DataContext : DbContext
     {
@@ -11,5 +11,6 @@ namespace DatingAppAPI.Persistance.Data
         }
 
         public DbSet<AppUser> Users { get; set; }
+        public DbSet<Photo> Photos { get; set; }
     }
 }
