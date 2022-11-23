@@ -1,4 +1,4 @@
-﻿namespace DatingAppAPI.DTO
+﻿namespace DatingAppAPI.Application.DTO
 {
     public class PhotoDTO
     {

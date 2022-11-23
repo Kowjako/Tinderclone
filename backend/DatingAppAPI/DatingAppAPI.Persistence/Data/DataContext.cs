@@ -1,4 +1,4 @@
-﻿using DatingAppAPI.Persistence.Entities;
+﻿using DatingAppAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DatingAppAPI.Persistence.Data

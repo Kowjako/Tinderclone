@@ -1,4 +1,4 @@
-﻿using DatingAppAPI.Errors;
+﻿using DatingAppAPI.Application.Errors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

@@ -1,8 +1,7 @@
-﻿using DatingAppAPI.Persistence.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 
-namespace DatingAppAPI.DTO
+namespace DatingAppAPI.Application.DTO
 {
     public class MemberDTO
     {

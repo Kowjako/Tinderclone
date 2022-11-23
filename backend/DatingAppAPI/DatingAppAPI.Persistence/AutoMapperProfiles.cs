@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
-using DatingAppAPI.DTO;
-using DatingAppAPI.Persistence.Entities;
+using DatingAppAPI.Application.DTO;
+using DatingAppAPI.Domain.Entities;
 using DatingAppAPI.Persistence.Extensions;
-using System.Linq;
 
-namespace DatingAppAPI.Helpers
+namespace DatingAppAPI.Persistence
 {
     public class AutoMapperProfiles : Profile
     {

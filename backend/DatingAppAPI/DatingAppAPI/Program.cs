@@ -1,7 +1,7 @@
+using DatingAppAPI.Application;
 using DatingAppAPI.Extensions;
 using DatingAppAPI.Middlewares;
 using DatingAppAPI.Persistence;
-using DatingAppAPI.Persistence.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,9 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 /* DI - container */
 
 builder.Services.ConfigurePersistence(builder.Configuration);
-builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.ConfigureIdentity(builder.Configuration);
-builder.Services.RegisterMiddlewares(builder.Configuration);
+builder.Services.RegisterMiddlewares();
+builder.Services.ConfigureApplication(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

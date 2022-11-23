@@ -1,4 +1,4 @@
-﻿using DatingAppAPI.Persistence.Entities;
+﻿using DatingAppAPI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;

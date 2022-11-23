@@ -1,14 +1,12 @@
-﻿using DatingAppAPI.Interfaces;
-using DatingAppAPI.Persistence.Entities;
+﻿using DatingAppAPI.Application.Interfaces.Services;
+using DatingAppAPI.Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace DatingAppAPI.ServiceImpl
+namespace DatingAppAPI.Application.ServiceImpl
 {
     public class TokenService : ITokenService
     {

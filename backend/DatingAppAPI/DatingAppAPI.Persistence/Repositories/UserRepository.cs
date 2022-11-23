@@ -1,15 +1,12 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using DatingAppAPI.DTO;
-using DatingAppAPI.Interfaces;
+using DatingAppAPI.Application.DTO;
+using DatingAppAPI.Application.Interfaces.Repositories;
+using DatingAppAPI.Domain.Entities;
 using DatingAppAPI.Persistence.Data;
-using DatingAppAPI.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace DatingAppAPI.Repositories
+namespace DatingAppAPI.Persistence.Repositories
 {
     public class UserRepository : IUserRepository
     {

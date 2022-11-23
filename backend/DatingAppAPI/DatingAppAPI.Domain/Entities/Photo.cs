@@ -1,4 +1,4 @@
-﻿namespace DatingAppAPI.Persistence.Entities
+﻿namespace DatingAppAPI.Domain.Entities
 {
     public class Photo
     {

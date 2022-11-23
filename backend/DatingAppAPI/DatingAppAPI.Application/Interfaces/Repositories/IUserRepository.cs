@@ -1,9 +1,9 @@
-﻿using DatingAppAPI.DTO;
-using DatingAppAPI.Persistence.Entities;
+﻿using DatingAppAPI.Application.DTO;
+using DatingAppAPI.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DatingAppAPI.Interfaces
+namespace DatingAppAPI.Application.Interfaces.Repositories
 {
     public interface IUserRepository
     {

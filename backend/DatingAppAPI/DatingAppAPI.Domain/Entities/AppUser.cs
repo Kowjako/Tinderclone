@@ -1,6 +1,4 @@
-﻿using DatingAppAPI.Persistence.Extensions;
-
-namespace DatingAppAPI.Persistence.Entities
+﻿namespace DatingAppAPI.Domain.Entities
 {
     public class AppUser
     {
@@ -33,6 +31,5 @@ namespace DatingAppAPI.Persistence.Entities
         public string Country { get; set; }
 
         public ICollection<Photo> Photos { get; set; }
-
     }
 }

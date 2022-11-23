@@ -1,5 +1,5 @@
-﻿using DatingAppAPI.DTO;
-using DatingAppAPI.Interfaces;
+﻿using DatingAppAPI.Application.DTO;
+using DatingAppAPI.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DatingAppAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class UsersController : BaseApiController
     {
         private readonly IUserRepository _repository;
