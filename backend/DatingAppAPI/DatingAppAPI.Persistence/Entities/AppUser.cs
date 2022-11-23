@@ -34,10 +34,5 @@ namespace DatingAppAPI.Persistence.Entities
 
         public ICollection<Photo> Photos { get; set; }
 
-        public int GetAge()
-        {
-            return DateOfBirth.CalculateAge();
-        }
-
     }
 }

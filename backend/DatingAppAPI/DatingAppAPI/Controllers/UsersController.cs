@@ -1,34 +1,32 @@
-﻿using DatingAppAPI.Persistence.Data;
-using DatingAppAPI.Persistence.Entities;
+﻿using DatingAppAPI.DTO;
+using DatingAppAPI.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DatingAppAPI.Controllers
 {
+    [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly DataContext _dbContext;
+        private readonly IUserRepository _repository;
 
-        public UsersController(DataContext context)
+        public UsersController(IUserRepository repo)
         {
-            _dbContext = context;
+            _repository = repo;
         }
 
-        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDTO>>> GetUsers()
         {
-            return await _dbContext.Users.ToListAsync();
+            return Ok(await _repository.GetMembersAsync());
         }
 
-        [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUserById([FromRoute]int id)
+        [HttpGet("{username}")]
+        public async Task<ActionResult<MemberDTO>> GetUserById([FromRoute]string username)
         {
-            return await _dbContext.Users.FindAsync(id);
+            return await _repository.GetMemberAsync(username);
         }
     }
 }
