@@ -8,7 +8,7 @@
 
         public bool IsMain { get; set; }
 
-        public string PublicId { get; set; }
+        public string? PublicId { get; set; }
 
         public AppUser AppUser { get; set; }
 

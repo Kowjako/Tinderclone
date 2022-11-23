@@ -7,7 +7,7 @@ namespace DatingAppAPI.Persistence.Data
     {
         public DataContext(DbContextOptions opt) : base(opt)
         {
-
+            
         }
 
         public DbSet<AppUser> Users { get; set; }
