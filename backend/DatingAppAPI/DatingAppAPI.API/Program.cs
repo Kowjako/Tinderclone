@@ -10,10 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 /* DI - container */
 
-builder.Services.ConfigurePersistence(builder.Configuration);
-builder.Services.ConfigureIdentity(builder.Configuration);
-builder.Services.RegisterMiddlewares();
-builder.Services.ConfigureApplication(builder.Configuration);
+builder.Services.ConfigurePersistence(builder.Configuration); // App.Persistence
+builder.Services.ConfigureIdentity(builder.Configuration); // JWT Identity
+builder.Services.RegisterMiddlewares(); // Middlewares
+builder.Services.ConfigureApplication(builder.Configuration); // App.Application
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -28,7 +28,7 @@ if(app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    await app.SeedDatabaseAsync();
+    await app.SeedDatabaseAsync(); // fill test db on dev workspace
 }
 
 app.UseMiddleware<ExceptionMiddleware>();

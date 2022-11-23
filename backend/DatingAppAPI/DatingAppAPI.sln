@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatingAppAPI", "DatingAppAPI\DatingAppAPI.csproj", "{C6A2C344-98EC-4AF6-9212-8DEA985807FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatingAppAPI.API", "DatingAppAPI.API\DatingAppAPI.API.csproj", "{C6A2C344-98EC-4AF6-9212-8DEA985807FF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatingAppAPI.Persistence", "DatingAppAPI.Persistence\DatingAppAPI.Persistence.csproj", "{50C33405-0954-4A5B-BD30-AFACB56E04E1}"
 EndProject
