@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  @Output() cancelRegister = new Subject();
+  @Output() cancelRegister = new EventEmitter();
 
   model: any = {};
 
@@ -39,7 +39,7 @@ export class RegisterComponent implements OnInit {
 
   cancel()
   {
-    this.cancelRegister.next(false);
+    this.cancelRegister.emit(false);
   }
 
 }
