@@ -1,15 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { faEnvelope, faHeart, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Member } from 'src/app/_models/member';
 
 @Component({
   selector: 'app-member-card',
   templateUrl: './member-card.component.html',
-  styleUrls: ['./member-card.component.css']
+  styleUrls: ['./member-card.component.css'],
 })
 export class MemberCardComponent implements OnInit {
   @Input() member: Member | undefined;
   memberIcon = faUser;
+  heartIcon = faHeart;
+  envelopeIcon = faEnvelope;
 
   constructor() { }
 
