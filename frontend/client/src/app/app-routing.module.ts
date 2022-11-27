@@ -10,6 +10,7 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
 import { MemberListComponent } from './members/member-list/member-list.component';
 import { MessagesComponent } from './messages/messages.component';
 import { AuthGuard } from './_guards/auth.guard';
+import { PreventUnsafedChangesGuard } from './_guards/prevent-unsafed-changes.guard';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -22,7 +23,7 @@ const routes: Routes = [
       {path: 'members/:username', component: MemberDetailComponent},
       {path: 'lists', component: ListsComponent},
       {path: 'messages', component: MessagesComponent},
-      {path: 'member/edit', component: MemberEditComponent}
+      {path: 'member/edit', component: MemberEditComponent, canDeactivate: [PreventUnsafedChangesGuard]}
     ]
   },
   {path: 'errors', component: TestErrorsComponent},
