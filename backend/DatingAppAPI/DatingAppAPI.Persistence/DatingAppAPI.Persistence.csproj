@@ -26,4 +26,6 @@
     <ProjectReference Include="..\DatingAppAPI.Application\DatingAppAPI.Application.csproj" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties userseeddata_1json__JsonSchema="https://github.com/fbecart/zinoma/releases/latest/download/zinoma-schema.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

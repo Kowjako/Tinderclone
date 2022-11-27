@@ -3,8 +3,12 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiUrl: 'https://localhost:5001/api/'
 };
+
+
+/* eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJsaXNhIiwibmJmIjoxNjY5NTUwNzA5LCJleHAiOjE2NzAxNTU1MDksImlhdCI6MTY2OTU1MDcwOX0.SI6DyzOVMZDfW9UHk-RpSNBRjGzdGrJwA1W3JCSjE6NEFAbC2k4h9q_3Gza3vkbUeKOZnzuGiutV1g0p3OBozg */
 
 /*
  * For easier debugging in development mode, you can import the following file
