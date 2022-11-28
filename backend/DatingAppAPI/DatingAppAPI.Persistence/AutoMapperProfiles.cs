@@ -13,6 +13,7 @@ namespace DatingAppAPI.Persistence
                 .ForMember(p => p.PhotoUrl, c => c.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ForMember(p => p.Age, c => c.MapFrom(src => src.DateOfBirth.CalculateAge()));
             CreateMap<Photo, PhotoDTO>();
+            CreateMap<MemberUpdateDTO, AppUser>();
         }
     }
 }
