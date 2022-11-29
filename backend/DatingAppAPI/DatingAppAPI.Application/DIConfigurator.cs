@@ -10,7 +10,7 @@ namespace DatingAppAPI.Application
         public static IServiceCollection ConfigureApplication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<ITokenService, TokenService>();
-
+            services.AddScoped<IPhotoService, PhotoService>();
             return services;
         }
     }

@@ -1,4 +1,5 @@
 using DatingAppAPI.Application;
+using DatingAppAPI.Application.Infrastructure;
 using DatingAppAPI.Extensions;
 using DatingAppAPI.Middlewares;
 using DatingAppAPI.Persistence;
@@ -14,6 +15,8 @@ builder.Services.ConfigurePersistence(builder.Configuration); // App.Persistence
 builder.Services.ConfigureIdentity(builder.Configuration); // JWT Identity
 builder.Services.RegisterMiddlewares(); // Middlewares
 builder.Services.ConfigureApplication(builder.Configuration); // App.Application
+
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
