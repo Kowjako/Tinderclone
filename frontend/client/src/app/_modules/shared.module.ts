@@ -18,7 +18,9 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     TabsModule.forRoot(),
     FontAwesomeModule,
     NgxGalleryModule,
-    NgxSpinnerModule
+    NgxSpinnerModule.forRoot({
+        type: 'line-scale-party'
+    })
   ],
   exports: [
     BsDropdownModule,
