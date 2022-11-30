@@ -1,5 +1,6 @@
 export interface User 
 {
     username: string,
-    jwtToken: string
+    jwtToken: string,
+    photoUrl: string
 }
