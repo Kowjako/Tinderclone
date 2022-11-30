@@ -2,8 +2,9 @@
     <div class="col-2 mt-2 my-1" *ngFor="let photo of member.photos">
         <img src="{{photo.url}}" alt="photo of user" class="img-thumbnail mb-1">
         <div class="text-center">
-            <button class="btn btn-sm btn-info me-1">Main</button>
-            <button class="btn btn-sm btn-danger">
+            <button class="btn btn-sm btn-info me-1" [disabled]="photo.isMain"
+                (click)="setMainPhoto(photo)">Main</button>
+            <button class="btn btn-sm btn-danger" [disabled]="photo.isMain" (click)="deletePhoto(photo.id)">
                 <fa-icon [icon]="iconTrash"></fa-icon>
             </button>
         </div>
@@ -43,7 +44,8 @@
             <div>
                 Queue progress:
                 <div class="progress mb-3 mt-1">
-                    <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader?.progress + '%' }"></div>
+                    <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader?.progress + '%' }">
+                    </div>
                 </div>
             </div>
             <button type="button" class="btn btn-success btn-s me-2" (click)="uploader?.uploadAll()"
