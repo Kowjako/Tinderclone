@@ -14,6 +14,8 @@ namespace DatingAppAPI.Persistence
                 .ForMember(p => p.Age, c => c.MapFrom(src => src.DateOfBirth.CalculateAge()));
             CreateMap<Photo, PhotoDTO>();
             CreateMap<MemberUpdateDTO, AppUser>();
+
+            CreateMap<RegisterDTO, AppUser>();
         }
     }
 }

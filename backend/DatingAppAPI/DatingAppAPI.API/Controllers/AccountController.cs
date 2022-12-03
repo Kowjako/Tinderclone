@@ -1,4 +1,5 @@
-﻿using DatingAppAPI.Application.DTO;
+﻿using AutoMapper;
+using DatingAppAPI.Application.DTO;
 using DatingAppAPI.Application.Interfaces.Services;
 using DatingAppAPI.Domain.Entities;
 using DatingAppAPI.Persistence.Data;
@@ -15,11 +16,13 @@ namespace DatingAppAPI.Controllers
     {
         private readonly DataContext _dbContext;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AccountController(DataContext context, ITokenService tokenService)
+        public AccountController(DataContext context, ITokenService tokenService, IMapper mapper)
         {
             _dbContext = context;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -27,14 +30,14 @@ namespace DatingAppAPI.Controllers
         {
             if (await UserExists(registerDTO.Username)) return BadRequest("Username is taken");
 
+            var user = _mapper.Map<AppUser>(registerDTO);
+
             using var hmac = new HMACSHA512();
 
-            var user = new AppUser()
-            {
-                UserName = registerDTO.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password)),
-                PasswordSalt = hmac.Key
-            };
+            user.UserName = registerDTO.Username.ToLower();
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password));
+            user.PasswordSalt = hmac.Key;
+            
 
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
@@ -42,7 +45,8 @@ namespace DatingAppAPI.Controllers
             return Ok(new UserDTO()
             {
                 Username = user.UserName,
-                JwtToken = _tokenService.CreateToken(user)
+                JwtToken = _tokenService.CreateToken(user),
+                KnownAs = user.KnownAs
             });
         }
 
@@ -64,7 +68,8 @@ namespace DatingAppAPI.Controllers
             {
                 Username = loginDTO.Username,
                 JwtToken = _tokenService.CreateToken(user),
-                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
+                KnownAs = user.KnownAs
             });
         }
 
