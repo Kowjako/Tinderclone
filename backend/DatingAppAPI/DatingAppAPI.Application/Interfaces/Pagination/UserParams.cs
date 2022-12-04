@@ -15,7 +15,7 @@
         }
 
 
-        public string CurrentUsername { get; set; }
+        public string CurrentUsername { get; set; } = string.Empty;
         public string Gender { get; set; }
 
         public int MinAge { get; set; } = 18;
