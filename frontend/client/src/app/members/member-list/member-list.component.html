@@ -1,4 +1,4 @@
-<div class="container mb-3" *ngIf="userParams">
+<div class="container mb-3 px-0" *ngIf="userParams">
     <form #form="ngForm" class="d-flex mb-3" (ngSubmit)="loadMembers()" autocomplete="off">
         <div class=" d-flex mx-2">
             <label class="col-form-label">Age from: </label>
@@ -17,8 +17,8 @@
             </select>
         </div>
 
-        <button class="btn btn-primary ms-1" type="submit">Apply filters</button>
-        <button (click)="resetFilters()" class="btn btn-info ms-1" type="submit">Reset filters</button>
+        <button class="btn btn-warning ms-1" type="submit">Apply filters</button>
+        <button (click)="resetFilters()" class="btn btn-dark ms-1" type="submit">Reset filters</button>
     </form>
 </div>
 

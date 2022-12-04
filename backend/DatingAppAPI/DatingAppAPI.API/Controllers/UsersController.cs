@@ -31,7 +31,7 @@ namespace DatingAppAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedList<MemberDTO>>> GetUsers([FromQuery] UserParams param)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = await _repository.GetUserByUsernameAsync(username);
             param.CurrentUsername = user.UserName;
 
@@ -55,7 +55,7 @@ namespace DatingAppAPI.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDTO memberUpd)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = await _repository.GetUserByUsernameAsync(username);
 
             if (user == null) return NotFound();
@@ -70,7 +70,7 @@ namespace DatingAppAPI.Controllers
         [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDTO>> AddPhoto(IFormFile file)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = await _repository.GetUserByUsernameAsync(username);
 
             if (user == null) return NotFound();
@@ -102,7 +102,7 @@ namespace DatingAppAPI.Controllers
         [HttpPut("set-main-photo/{photoId}")]
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = await _repository.GetUserByUsernameAsync(username);
 
             if (user == null) return NotFound();
@@ -123,7 +123,7 @@ namespace DatingAppAPI.Controllers
         [HttpDelete("delete-photo/{photoId}")]
         public async Task<ActionResult> DeletePhoto(int photoId)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
             var user = await _repository.GetUserByUsernameAsync(username);
 
             if (user == null) return NotFound();

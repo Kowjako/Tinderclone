@@ -36,6 +36,11 @@ namespace DatingAppAPI.Persistence.Repositories
             var minDob = DateTime.Today.AddYears(-param.MaxAge - 1);
             var maxDob = DateTime.Today.AddYears(-param.MinAge);
             query = query.Where(x => x.DateOfBirth >= minDob && x.DateOfBirth <= maxDob);
+            query = param.OrderBy switch
+            {
+                "created" => query.OrderByDescending(u => u.Created),
+                _ => query.OrderByDescending(u => u.LastActive)
+            };
 
             return await PagedList<MemberDTO>.CreateAsync(query.AsNoTracking().ProjectTo<MemberDTO>(_mapper.ConfigurationProvider),
                                                           param.PageNumber, param.PageSize);

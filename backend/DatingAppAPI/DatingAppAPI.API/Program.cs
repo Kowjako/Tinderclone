@@ -15,6 +15,7 @@ builder.Services.ConfigurePersistence(builder.Configuration); // App.Persistence
 builder.Services.ConfigureIdentity(builder.Configuration); // JWT Identity
 builder.Services.RegisterMiddlewares(); // Middlewares
 builder.Services.ConfigureApplication(builder.Configuration); // App.Application
+builder.Services.AddScoped<LogUserActivityFilter>();
 
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
