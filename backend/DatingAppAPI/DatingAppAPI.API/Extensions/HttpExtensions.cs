@@ -1,4 +1,4 @@
-﻿using DatingAppAPI.Application.Interfaces.Repositories;
+﻿using DatingAppAPI.Application.Interfaces.Pagination;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 
