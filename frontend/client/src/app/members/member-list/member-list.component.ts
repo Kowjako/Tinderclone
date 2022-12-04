@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { Member } from 'src/app/_models/member';
 import { Pagination } from 'src/app/_models/pagination';
+import { User } from 'src/app/_models/user';
+import { UserParams } from 'src/app/_models/userParams';
+import { AccountService } from 'src/app/_services/account.service';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -13,19 +16,39 @@ export class MemberListComponent implements OnInit {
   //members$: Observable<Member[]> | undefined;
   members: Member[] = [];
   pagination: Pagination | undefined;
-  pageNumber = 1;
-  pageSize = 5;
+  userParams: UserParams;
+  user: User;
+  genderList = [{value: 'male', display: 'Males'}, {value: 'female', display: 'Females'}]
 
-  constructor(private memberService: MembersService) { }
+  constructor(private memberService: MembersService, private accService: AccountService) { 
+    this.accService.currentUser$.pipe(take(1)).subscribe({
+      next: resp => {
+        if(resp)
+        {
+          this.userParams = new UserParams(resp);
+          this.user = resp;
+        }
+      }
+    })
+  }
 
   ngOnInit(): void {
     //this.members$ = this.memberService.getMembers();
     this.loadMembers();
   }
 
+  resetFilters()
+  {
+    if(this.user)
+    {
+      this.userParams = new UserParams(this.user);
+      this.loadMembers();
+    }
+  }
+
   loadMembers()
   {
-    this.memberService.getMembers(this.pageNumber, this.pageSize).subscribe({
+    this.memberService.getMembers(this.userParams).subscribe({
       next: resp => {
         if(resp.result && resp.pagination)
         {
@@ -38,9 +61,9 @@ export class MemberListComponent implements OnInit {
 
   pageChanged(event: any)
   {
-    if(this.pageNumber !== event.page)
+    if(this.userParams?.pageNumber !== event.page)
     {
-      this.pageNumber = event.page;
+      this.userParams.pageNumber = event.page;
       this.loadMembers();
     } 
   }
