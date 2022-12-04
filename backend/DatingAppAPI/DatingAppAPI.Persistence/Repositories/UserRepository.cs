@@ -29,9 +29,16 @@ namespace DatingAppAPI.Persistence.Repositories
 
         public async Task<PagedList<MemberDTO>> GetMembersAsync(UserParams param)
         {
-            var query = _dbContext.Users.ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
-                                        .AsNoTracking();
-            return await PagedList<MemberDTO>.CreateAsync(query, param.PageNumber, param.PageSize);
+            var query = _dbContext.Users.AsQueryable();
+            query = query.Where(x => x.UserName != param.CurrentUsername)
+                         .Where(x => x.Gender.Equals(param.Gender));
+
+            var minDob = DateTime.Today.AddYears(-param.MaxAge - 1);
+            var maxDob = DateTime.Today.AddYears(-param.MinAge);
+            query = query.Where(x => x.DateOfBirth >= minDob && x.DateOfBirth <= maxDob);
+
+            return await PagedList<MemberDTO>.CreateAsync(query.AsNoTracking().ProjectTo<MemberDTO>(_mapper.ConfigurationProvider),
+                                                          param.PageNumber, param.PageSize);
         }
 
         public async Task<AppUser> GetUserByIdAsync(int id)
