@@ -1,10 +1,12 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, of } from 'rxjs';
+import { map, of, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
 import { PaginatedResult } from '../_models/pagination';
+import { User } from '../_models/user';
 import { UserParams } from '../_models/userParams';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,15 +15,49 @@ export class MembersService {
   baseUrl = environment.apiUrl;
   members: Member[] = [];
   memberCache = new Map();
+  user: User | undefined;
+  userParams: UserParams | undefined;
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private accService: AccountService) { 
+    this.accService.currentUser$.pipe(take(1)).subscribe({
+      next: resp => {
+        if(resp)
+        {
+          this.userParams = new UserParams(resp);
+          this.user = resp;
+        }
+      }
+    })
+  }
+
+  getUserParams()
+  {
+    return this.userParams;
+  }
+
+  setUserParams(params: UserParams)
+  {
+    this.userParams = params;
+  }
+
+  resetUserParams()
+  {
+    if(this.user)
+    {
+      this.userParams = new UserParams(this.user);
+      return this.userParams
+    }
+    return;
+  }
 
   getMembers(userParams: UserParams)
   {
     /* cachowanie - kluczem jest get query */
+    console.log(userParams);
     const response = this.memberCache.get(Object.values(userParams).join('-'));
     if(response) return of(response);
 
+    console.log('checker')
     let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
     params = params.append('minAge', userParams.minAge);
     params = params.append('maxAge', userParams.maxAge);
@@ -31,7 +67,7 @@ export class MembersService {
     return this.getPaginatedResult<Member[]>(this.baseUrl + 'users', params).pipe(
       map(result => {
         this.memberCache.set(Object.values(userParams).join('-'), result);
-        return response;
+        return result;
       })
     );
   }
@@ -41,7 +77,7 @@ export class MembersService {
     const member = [...this.memberCache.values()].reduce((arr, elem) => arr.concat(elem.result), [])
                                                  .find((member: Member) => member.userName === username);
     if(member) return of(member);
-    
+
     return this.httpClient.get<Member>(this.baseUrl + `users/${username}`);
   }
 
