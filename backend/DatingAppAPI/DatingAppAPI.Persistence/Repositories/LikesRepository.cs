@@ -37,6 +37,8 @@ namespace DatingAppAPI.Persistence.Repositories
                 users = likes.Select(l => l.SourceUser);
             }
 
+            /* IQueryable i projekcja poprzez Select pozwalaja nie robic Include(p => p.Photos) */
+
             return await users.Select(u => new LikeDTO()
             {
                 UserName = u.UserName,
