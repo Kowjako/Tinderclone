@@ -19,6 +19,20 @@
 
         <button class="btn btn-warning ms-1" type="submit">Apply filters</button>
         <button (click)="resetFilters()" class="btn btn-dark ms-1" type="submit">Reset filters</button>
+
+
+        <div class="col">
+            <div class="btn-group float-end">
+                <button class="btn btn-success me-2" name="orderBy" (click)="loadMembers()"
+                type="button"
+                [(ngModel)]="userParams.orderBy"
+                btnRadio="lastActive">Last Active</button>
+                <button class="btn btn-success" name="orderBy" (click)="loadMembers()"
+                type="button"
+                [(ngModel)]="userParams.orderBy"
+                btnRadio="createdAt">Newest members</button>
+            </div>
+        </div>
     </form>
 </div>
 
