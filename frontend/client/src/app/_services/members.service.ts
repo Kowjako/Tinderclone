@@ -108,7 +108,7 @@ export class MembersService {
 
   getLikes(predicate: string)
   {
-    return this.httpClient.get(this.baseUrl + 'likes?predicate=' + predicate);
+    return this.httpClient.get<Member[]>(this.baseUrl + 'likes?predicate=' + predicate);
   }
 
   private getPaginatedResult<T>(url: string, params: HttpParams) {
