@@ -9,7 +9,7 @@ namespace DatingAppAPI.Application.Interfaces.Repositories
         void AddMessage(Message msg);
         void DeleteMessage(Message msg);
         Task<Message> GetMessage(int id);
-        Task<PagedList<MessageDTO>> GetMessagesForUser();
+        Task<PagedList<MessageDTO>> GetMessagesForUser(MessageParams param);
         Task<IEnumerable<MessageDTO>> GetMessageThread(int currentUserId, int receiverId);
         Task<bool> SaveAllAsync();
     }
