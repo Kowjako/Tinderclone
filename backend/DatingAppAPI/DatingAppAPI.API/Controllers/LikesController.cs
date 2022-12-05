@@ -1,4 +1,6 @@
-﻿using DatingAppAPI.Application.DTO;
+﻿using DatingAppAPI.API.Extensions;
+using DatingAppAPI.Application.DTO;
+using DatingAppAPI.Application.Interfaces.Pagination;
 using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Controllers;
 using DatingAppAPI.Domain.Entities;
@@ -46,10 +48,17 @@ namespace DatingAppAPI.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LikeDTO>>> GetUserLikes(string predicate)
+        public async Task<ActionResult<PagedList<LikeDTO>>> GetUserLikes([FromQuery] LikeParams likesParams)
         {
             var sourceUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var likes = await _likeRepo.GetUserLikes(predicate, int.Parse(sourceUserId));
+            likesParams.UserId = int.Parse(sourceUserId);
+
+            var likes = await _likeRepo.GetUserLikes(likesParams);
+            Response.AddPaginationHeader(new PaginationHeader(likes.CurrentPage,
+                                                              likes.PageSize,
+                                                              likes.TotalCount,
+                                                              likes.TotalPages));
+
             return Ok(likes);
         }
     }
