@@ -6,6 +6,7 @@ using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Controllers;
 using DatingAppAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -63,5 +64,13 @@ namespace DatingAppAPI.API.Controllers
                                                               msg.TotalPages));
             return Ok(msg);
         }
+
+        [HttpGet("thread/{receiverUsername}")]
+        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessageThread([FromRoute] string receiverUsername)
+        {
+            var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
+            return Ok(await _msgRepo.GetMessageThread(currentUserName, receiverUsername));
+        }
+
     }
 }

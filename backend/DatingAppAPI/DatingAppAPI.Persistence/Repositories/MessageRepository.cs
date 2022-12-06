@@ -5,6 +5,7 @@ using DatingAppAPI.Application.Interfaces.Pagination;
 using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Domain.Entities;
 using DatingAppAPI.Persistence.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DatingAppAPI.Persistence.Repositories
 {
@@ -49,9 +50,26 @@ namespace DatingAppAPI.Persistence.Repositories
             return await PagedList<MessageDTO>.CreateAsync(messages, param.PageNumber, param.PageSize);
         }
 
-        public Task<IEnumerable<MessageDTO>> GetMessageThread(int currentUserId, int receiverId)
+        public async Task<IEnumerable<MessageDTO>> GetMessageThread(string senderName, string receiverName)
         {
-            throw new NotImplementedException();
+            var messages = await _dbContext.Messages.Include(p => p.Sender).ThenInclude(p => p.Photos)
+                                                    .Include(p => p.Receiver).ThenInclude(p => p.Photos)
+                                                    .Where(m => m.ReceiverUsername == senderName &&
+                                                                m.SenderUsername == receiverName ||
+                                                                m.ReceiverUsername == receiverName &&
+                                                                m.SenderUsername == senderName)
+                                                    .OrderByDescending(m => m.MessageSent)
+                                                    .ToListAsync();
+
+            var unreadMsg = messages.Where(p => p.DateRead == null && p.ReceiverUsername == senderName).ToList();
+
+            if(unreadMsg.Any())
+            {
+                unreadMsg.ForEach(msg => msg.DateRead = DateTime.UtcNow);
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return _mapper.Map<IEnumerable<MessageDTO>>(messages);
         }
 
         public async Task<bool> SaveAllAsync()

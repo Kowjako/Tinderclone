@@ -10,7 +10,7 @@ namespace DatingAppAPI.Application.Interfaces.Repositories
         void DeleteMessage(Message msg);
         Task<Message> GetMessage(int id);
         Task<PagedList<MessageDTO>> GetMessagesForUser(MessageParams param);
-        Task<IEnumerable<MessageDTO>> GetMessageThread(int currentUserId, int receiverId);
+        Task<IEnumerable<MessageDTO>> GetMessageThread(string username, string receiverName);
         Task<bool> SaveAllAsync();
     }
 }
