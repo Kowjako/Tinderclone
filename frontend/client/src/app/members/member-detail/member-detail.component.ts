@@ -13,8 +13,8 @@ import { MessagesService } from 'src/app/_services/messages.service';
   styleUrls: ['./member-detail.component.css']
 })
 export class MemberDetailComponent implements OnInit {
-  @ViewChild('memberTabs') memberTabs?: TabsetComponent;
-  member: Member | undefined;
+  @ViewChild('memberTabs', {static: true}) memberTabs?: TabsetComponent;
+  member: Member;
   galleryOptions: NgxGalleryOptions[] = [];
   galleryImages: NgxGalleryImage[] = [];
   activeTab: TabDirective;
@@ -23,7 +23,22 @@ export class MemberDetailComponent implements OnInit {
   constructor(private memberService: MembersService, private route: ActivatedRoute, private msgService: MessagesService) { }
 
   ngOnInit(): void {
-    this.loadMember();
+    this.route.data.subscribe({
+      next: data => 
+      {
+        this.member = data['member'];
+      }
+    });
+
+    /* Umozliwienie przejscia do Tab'u Messages z poziomu member-card, oraz messages */
+    this.route.queryParams.subscribe({
+      next: params => {
+        if(params['tab'])
+        {
+          this.selectTab(params['tab']);
+        }
+      }
+    });
 
     this.galleryOptions = [
       {
@@ -34,7 +49,9 @@ export class MemberDetailComponent implements OnInit {
         imageAnimation: NgxGalleryAnimation.Slide,
         preview: false
       },
-    ]
+    ];
+
+    this.galleryImages = this.getImages(); /* uzupelniamy galerie dopiero po otrzymaniu uzytkownika */
   }
 
   getImages()
@@ -51,20 +68,6 @@ export class MemberDetailComponent implements OnInit {
     }
 
     return imageUrls;
-  }
-
-  loadMember()
-  {
-    const username = this.route.snapshot.paramMap.get('username');
-    this.memberService.getMember(username).subscribe(
-      {
-        next: member => {
-          this.member = member;
-          this.galleryImages = this.getImages(); /* uzupelniamy galerie dopiero po otrzymaniu uzytkownika */
-        },
-        error: err => console.log(err)
-      }
-    );
   }
 
   loadMessages()
@@ -89,4 +92,12 @@ export class MemberDetailComponent implements OnInit {
     }
   }
 
+
+  selectTab(heading: string)
+  {
+    if(this.memberTabs)
+    {
+      this.memberTabs.tabs.find(x => x.heading === heading).active = true;
+    }
+  }
 }
