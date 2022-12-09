@@ -15,7 +15,8 @@
                                 <span class="text-danger"
                                     *ngIf="!message.dateRead && message.senderUsername !== userName"> (unread)</span>
                                 <span class="text-success"
-                                    *ngIf="message.dateRead && message.senderUsername !== userName"> (read {{message.dateRead | date: 'medium'}})</span>
+                                    *ngIf="message.dateRead && message.senderUsername !== userName"> (read
+                                    {{message.dateRead | date: 'medium'}})</span>
                             </small>
                         </div>
                         <p>{{message.content}}</p>
@@ -26,11 +27,13 @@
     </div>
 
     <div class="card-footer">
-        <form>
+        <form #msgForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
             <div class="input-group">
-                <input type="text" class="form-control input-sm" placeholder="Send a private message">
+                <input type="text" class="form-control input-sm" placeholder="Send a private message"
+                    required
+                    name="messageContent" [(ngModel)]="messageContent">
                 <div class="input-group-append">
-                    <button class="btn btn-primary ms-3" type="submit">Send</button>
+                    <button [disabled]="!msgForm.valid" class="btn btn-primary ms-3" type="submit">Send</button>
                 </div>
             </div>
         </form>

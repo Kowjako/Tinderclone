@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Message } from 'src/app/_models/message';
 import { MessagesService } from 'src/app/_services/messages.service';
 
@@ -8,11 +9,24 @@ import { MessagesService } from 'src/app/_services/messages.service';
   styleUrls: ['./member-messages.component.css']
 })
 export class MemberMessagesComponent implements OnInit {
+  @ViewChild('msgForm') msgForm: NgForm;
   @Input() userName?: string;
   @Input() messages: Message[] = [];
+  messageContent: string = '';
 
   constructor(private msgService: MessagesService) { }
 
   ngOnInit(): void {
+  }
+
+  sendMessage()
+  {
+    if(!this.userName) return;
+    this.msgService.sendMessage(this.userName, this.messageContent).subscribe({
+      next: resp => {
+        this.messages.push(resp);
+        this.msgForm.reset();
+      }
+    })
   }
 }

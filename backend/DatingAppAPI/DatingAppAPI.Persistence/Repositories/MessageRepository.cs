@@ -41,9 +41,10 @@ namespace DatingAppAPI.Persistence.Repositories
 
             query = param.Container switch
             {
-                "Inbox" => query.Where(p => p.ReceiverUsername.Equals(param.Username)),
-                "Outbox" => query.Where(p => p.SenderUsername.Equals(param.Username)),
-                _ => query.Where(p => p.ReceiverUsername.Equals(param.Username) && p.DateRead == null)
+                "Inbox" => query.Where(p => p.ReceiverUsername.Equals(param.Username) && !p.ReceiverDeleted),
+                "Outbox" => query.Where(p => p.SenderUsername.Equals(param.Username) && !p.SenderDeleted),
+                _ => query.Where(p => p.ReceiverUsername.Equals(param.Username) && p.DateRead == null &&
+                                 !p.ReceiverDeleted)
             };
 
             var messages = query.ProjectTo<MessageDTO>(_mapper.ConfigurationProvider);
@@ -54,9 +55,11 @@ namespace DatingAppAPI.Persistence.Repositories
         {
             var messages = await _dbContext.Messages.Include(p => p.Sender).ThenInclude(p => p.Photos)
                                                     .Include(p => p.Receiver).ThenInclude(p => p.Photos)
-                                                    .Where(m => m.ReceiverUsername == senderName &&
+                                                    .Where(m => m.ReceiverUsername == senderName && 
+                                                                !m.ReceiverDeleted &&
                                                                 m.SenderUsername == receiverName ||
                                                                 m.ReceiverUsername == receiverName &&
+                                                                !m.SenderDeleted &&
                                                                 m.SenderUsername == senderName)
                                                     .OrderByDescending(m => m.MessageSent)
                                                     .ToListAsync();

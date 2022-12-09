@@ -72,5 +72,33 @@ namespace DatingAppAPI.API.Controllers
             return Ok(await _msgRepo.GetMessageThread(currentUserName, receiverUsername));
         }
 
+        [HttpDelete("{msgId}")]
+        public async Task<ActionResult> DeleteMessage(int msgId)
+        {
+            var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
+            var message = await _msgRepo.GetMessage(msgId);
+
+            if(message.ReceiverUsername.Equals(currentUserName) ||
+               message.SenderUsername.Equals(currentUserName))
+            {
+                if (message.SenderUsername.Equals(currentUserName)) message.SenderDeleted = true;
+                if (message.ReceiverUsername.Equals(currentUserName)) message.ReceiverDeleted = true;
+
+                if(message.SenderDeleted && message.ReceiverDeleted)
+                {
+                    _msgRepo.DeleteMessage(message);
+                }
+
+                if(await _msgRepo.SaveAllAsync())
+                {
+                    return Ok();
+                }
+                return BadRequest("Problem deleting the message");
+            }
+            else
+            {
+                return Unauthorized();
+            }
+        }
     }
 }

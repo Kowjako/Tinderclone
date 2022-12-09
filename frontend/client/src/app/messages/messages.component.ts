@@ -21,6 +21,8 @@ export class MessagesComponent implements OnInit {
   iconEnvelopeOpen = faEnvelopeOpen;
   iconPaperPlane = faPaperPlane;
 
+  loading: boolean = false;
+
   constructor(private msgService: MessagesService) { }
 
   ngOnInit(): void {
@@ -29,12 +31,14 @@ export class MessagesComponent implements OnInit {
 
   loadMessages()
   {
+    this.loading = true;
     console.log('load msg');
     this.msgService.getMessages(this.pageNumber, this.pageSize, this.container).subscribe({
       next: resp => {
         this.messages = resp.result;
         console.log(this.messages[0]);
         this.pagination = resp.pagination;
+        this.loading = false;
       } 
     })
   }
