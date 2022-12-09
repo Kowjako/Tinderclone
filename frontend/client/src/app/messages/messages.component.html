@@ -45,7 +45,7 @@
                 </td>
                 <td>{{msg.messageSent | date }}</td>
                 <td>
-                    <button class="btn btn-danger">Delete</button>
+                    <button class="btn btn-danger" (click)="$event.stopPropagation()" (click)="deleteMessage(msg.id)">Delete</button>
                 </td>
             </tr>
         </tbody>
