@@ -2,25 +2,23 @@
 using DatingAppAPI.Application.DTO;
 using DatingAppAPI.Application.Interfaces.Services;
 using DatingAppAPI.Domain.Entities;
-using DatingAppAPI.Persistence.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DatingAppAPI.Controllers
 {
     public class AccountController : BaseApiController
     {
-        private readonly DataContext _dbContext;
+        private readonly UserManager<AppUser> _userMngr;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
 
-        public AccountController(DataContext context, ITokenService tokenService, IMapper mapper)
+        public AccountController(UserManager<AppUser> userMngr, ITokenService tokenService, IMapper mapper)
         {
-            _dbContext = context;
+            _userMngr = userMngr;
             _tokenService = tokenService;
             _mapper = mapper;
         }
@@ -31,11 +29,10 @@ namespace DatingAppAPI.Controllers
             if (await UserExists(registerDTO.Username)) return BadRequest("Username is taken");
 
             var user = _mapper.Map<AppUser>(registerDTO);
-
             user.UserName = registerDTO.Username.ToLower();
 
-            await _dbContext.Users.AddAsync(user);
-            await _dbContext.SaveChangesAsync();
+            var saveUserResult = await _userMngr.CreateAsync(user, registerDTO.Password);
+            if (!saveUserResult.Succeeded) return BadRequest(saveUserResult.Errors);
 
             return Ok(new UserDTO()
             {
@@ -49,10 +46,13 @@ namespace DatingAppAPI.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login([FromBody]LoginDTO loginDTO)
         {
-            var user = await _dbContext.Users.Include(p => p.Photos)
-                                             .SingleOrDefaultAsync(x => x.UserName.Equals(loginDTO.Username));
+            var user = await _userMngr.Users.Include(p => p.Photos)
+                                            .SingleOrDefaultAsync(x => x.UserName.Equals(loginDTO.Username));
 
             if (user == null) return Unauthorized("Invalid username");
+
+            var result = await _userMngr.CheckPasswordAsync(user, loginDTO.Password);
+            if (!result) return Unauthorized("Invalid password");
 
             return Ok(new UserDTO()
             {
@@ -66,7 +66,7 @@ namespace DatingAppAPI.Controllers
 
         private async Task<bool> UserExists(string userName)
         {
-            return await _dbContext.Users.AnyAsync(x => x.UserName.Equals(userName.ToLower()));
+            return await _userMngr.Users.AnyAsync(x => x.UserName.Equals(userName.ToLower()));
         }
     }
 }
