@@ -46,6 +46,10 @@ export class AccountService {
 
   setCurrentUser(user: User)
   {
+    user.roles = [];
+    const roles = this.getDecodedToken(user.jwtToken).role;
+    Array.isArray(roles) ? user.roles = roles : user.roles.push(roles);
+
     /* LocalStore - zapisze dane w przegladarce */
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
@@ -55,5 +59,11 @@ export class AccountService {
   {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+  }
+
+  getDecodedToken(token: string)
+  {
+    console.log(token);
+    return JSON.parse(atob(token.split(".")[1]));
   }
 }
