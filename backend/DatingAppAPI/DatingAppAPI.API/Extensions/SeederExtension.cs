@@ -12,8 +12,9 @@ namespace DatingAppAPI.Extensions
         public static async Task SeedDatabaseAsync(this WebApplication app)
         {
             using var scope = app.Services.CreateScope();
-            var scopedContext = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-            await Seeder.SeedUsers(scopedContext);
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+            await Seeder.SeedUsers(userManager, roleManager);
         }
     }
 }

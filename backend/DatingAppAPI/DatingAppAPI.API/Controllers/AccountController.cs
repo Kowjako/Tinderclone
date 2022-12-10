@@ -34,10 +34,13 @@ namespace DatingAppAPI.Controllers
             var saveUserResult = await _userMngr.CreateAsync(user, registerDTO.Password);
             if (!saveUserResult.Succeeded) return BadRequest(saveUserResult.Errors);
 
+            var roleResult = await _userMngr.AddToRoleAsync(user, "Member");
+            if(!roleResult.Succeeded) return BadRequest(roleResult.Errors);
+
             return Ok(new UserDTO()
             {
                 Username = user.UserName,
-                JwtToken = _tokenService.CreateToken(user),
+                JwtToken = await _tokenService.CreateToken(user),
                 KnownAs = user.KnownAs,
                 Gender = user.Gender
             });
@@ -57,7 +60,7 @@ namespace DatingAppAPI.Controllers
             return Ok(new UserDTO()
             {
                 Username = loginDTO.Username,
-                JwtToken = _tokenService.CreateToken(user),
+                JwtToken = await _tokenService.CreateToken(user),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
                 KnownAs = user.KnownAs,
                 Gender = user.Gender
