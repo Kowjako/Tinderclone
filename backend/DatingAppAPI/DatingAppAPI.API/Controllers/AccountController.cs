@@ -32,12 +32,7 @@ namespace DatingAppAPI.Controllers
 
             var user = _mapper.Map<AppUser>(registerDTO);
 
-            using var hmac = new HMACSHA512();
-
             user.UserName = registerDTO.Username.ToLower();
-            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password));
-            user.PasswordSalt = hmac.Key;
-            
 
             await _dbContext.Users.AddAsync(user);
             await _dbContext.SaveChangesAsync();
@@ -58,12 +53,6 @@ namespace DatingAppAPI.Controllers
                                              .SingleOrDefaultAsync(x => x.UserName.Equals(loginDTO.Username));
 
             if (user == null) return Unauthorized("Invalid username");
-
-            using var hmac = new HMACSHA512(user.PasswordSalt);
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDTO.Password));
-
-            if (!computedHash.SequenceEqual(user.PasswordHash))
-                return Unauthorized("Invalid password");
 
             return Ok(new UserDTO()
             {
