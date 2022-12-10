@@ -33,6 +33,12 @@ namespace DatingAppAPI.Extensions
                         };
                     });
 
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("RequireAdminRole", p => p.RequireRole("Admin"));
+                opt.AddPolicy("ModeratePhotoRole", p => p.RequireRole("Admin", "Moderator"));
+            });
+
             return services;
         }
     }
