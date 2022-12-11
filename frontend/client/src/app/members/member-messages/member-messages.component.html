@@ -11,12 +11,12 @@
                     <div class="chat-body">
                         <div class="header">
                             <small class="text-muted">
-                                <span>{{message.messageSent | date: 'medium'}}</span>
+                                <span>{{message.messageSent | timeago }}</span>
                                 <span class="text-danger"
                                     *ngIf="!message.dateRead && message.senderUsername !== userName"> (unread)</span>
                                 <span class="text-success"
                                     *ngIf="message.dateRead && message.senderUsername !== userName"> (read
-                                    {{message.dateRead | date: 'medium'}})</span>
+                                    {{message.dateRead | timeago }})</span>
                             </small>
                         </div>
                         <p>{{message.content}}</p>

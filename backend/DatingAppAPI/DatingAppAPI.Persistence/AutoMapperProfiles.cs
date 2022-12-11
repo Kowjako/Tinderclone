@@ -20,6 +20,11 @@ namespace DatingAppAPI.Persistence
             CreateMap<Message, MessageDTO>()
                 .ForMember(p => p.SenderPhotoUrl, c => c.MapFrom(src => src.Sender.Photos.FirstOrDefault(p => p.IsMain).Url))
                 .ForMember(p => p.ReceiverPhotoUrl, c => c.MapFrom(src => src.Receiver.Photos.FirstOrDefault(p => p.IsMain).Url));
+
+
+            CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
+            CreateMap<DateTime?, DateTime?>().ConvertUsing(d => d.HasValue ? DateTime.SpecifyKind(d.Value, DateTimeKind.Utc)
+                                                                           : null);
         }
     }
 }
