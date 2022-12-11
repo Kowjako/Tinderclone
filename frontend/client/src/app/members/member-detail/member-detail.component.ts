@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { Member } from 'src/app/_models/member';
 import { Message } from 'src/app/_models/message';
 import { MembersService } from 'src/app/_services/members.service';
 import { MessagesService } from 'src/app/_services/messages.service';
+import { PresenceService } from 'src/app/_services/signalR/presence.service';
 
 @Component({
   selector: 'app-member-detail',
@@ -20,7 +22,10 @@ export class MemberDetailComponent implements OnInit {
   activeTab: TabDirective;
   messages: Message[] = [];
 
-  constructor(private memberService: MembersService, private route: ActivatedRoute, private msgService: MessagesService) { }
+  userCircleIcon = faUserCircle;
+
+  constructor(private memberService: MembersService, private route: ActivatedRoute, private msgService: MessagesService,
+              public presenceService: PresenceService) { }
 
   ngOnInit(): void {
     this.route.data.subscribe({
