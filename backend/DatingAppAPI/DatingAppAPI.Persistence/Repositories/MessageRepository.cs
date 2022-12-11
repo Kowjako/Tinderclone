@@ -6,6 +6,7 @@ using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Domain.Entities;
 using DatingAppAPI.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
+using Connection = DatingAppAPI.Domain.Entities.Connection;
 
 namespace DatingAppAPI.Persistence.Repositories
 {
@@ -20,6 +21,32 @@ namespace DatingAppAPI.Persistence.Repositories
             _mapper = mapper;
         }
 
+        public void AddGroup(Group group)
+        {
+            _dbContext.Groups.Add(group);
+        }
+
+        public async Task<Connection> GetConnection(string connectionId)
+        {
+            return await _dbContext.Connections.FindAsync(connectionId);
+        }
+
+        public async Task<Group> GetMessageGroup(string groupName)
+        {
+            return await _dbContext.Groups.Include(p => p.Connections)
+                                          .FirstOrDefaultAsync(p => p.Name.Equals(groupName));
+        }
+
+        public void RemoveConnection(Connection conn)
+        {
+            _dbContext.Connections.Remove(conn);
+        }
+
+        public async Task<Message> GetMessage(int id)
+        {
+            return await _dbContext.Messages.FindAsync(id);
+        }
+
         public void AddMessage(Message msg)
         {
             _dbContext.Messages.Add(msg);
@@ -30,10 +57,6 @@ namespace DatingAppAPI.Persistence.Repositories
             _dbContext.Messages.Remove(msg);
         }
 
-        public async Task<Message> GetMessage(int id)
-        {
-            return await _dbContext.Messages.FindAsync(id);
-        }
 
         public async Task<PagedList<MessageDTO>> GetMessagesForUser(MessageParams param)
         {
@@ -55,7 +78,7 @@ namespace DatingAppAPI.Persistence.Repositories
         {
             var messages = await _dbContext.Messages.Include(p => p.Sender).ThenInclude(p => p.Photos)
                                                     .Include(p => p.Receiver).ThenInclude(p => p.Photos)
-                                                    .Where(m => m.ReceiverUsername == senderName && 
+                                                    .Where(m => m.ReceiverUsername == senderName &&
                                                                 !m.ReceiverDeleted &&
                                                                 m.SenderUsername == receiverName ||
                                                                 m.ReceiverUsername == receiverName &&
@@ -66,7 +89,7 @@ namespace DatingAppAPI.Persistence.Repositories
 
             var unreadMsg = messages.Where(p => p.DateRead == null && p.ReceiverUsername == senderName).ToList();
 
-            if(unreadMsg.Any())
+            if (unreadMsg.Any())
             {
                 unreadMsg.ForEach(msg => msg.DateRead = DateTime.UtcNow);
                 await _dbContext.SaveChangesAsync();
