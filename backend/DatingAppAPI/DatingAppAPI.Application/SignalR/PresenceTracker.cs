@@ -43,8 +43,8 @@
             lock(OnlineUsers)
             {
                 onlineUsers = OnlineUsers.OrderBy(k => k.Key)
-                                             .Select(k => k.Key)
-                                             .ToArray();
+                                         .Select(k => k.Key)
+                                         .ToArray();
             }
 
             return Task.FromResult(onlineUsers);
