@@ -54,5 +54,6 @@ app.UseEndpoints(ep => ep.MapControllers());
 
 // SingalR endpoint for online user hub
 app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<MessageHub>("hubs/message");
 
 app.Run();
