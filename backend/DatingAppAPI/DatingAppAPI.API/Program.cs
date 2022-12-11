@@ -1,6 +1,7 @@
 using DatingAppAPI.API.Filter;
 using DatingAppAPI.Application;
 using DatingAppAPI.Application.Infrastructure;
+using DatingAppAPI.Application.SignalR;
 using DatingAppAPI.Extensions;
 using DatingAppAPI.Middlewares;
 using DatingAppAPI.Persistence;
@@ -13,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 /* DI - container */
 
 builder.Services.ConfigurePersistence(builder.Configuration); // App.Persistence
-builder.Services.ConfigureIdentity(builder.Configuration); // JWT Identity
+builder.Services.ConfigureIdentity(builder.Configuration); // Identity + JWT
 builder.Services.RegisterMiddlewares(); // Middlewares
 builder.Services.ConfigureApplication(builder.Configuration); // App.Application
 builder.Services.AddScoped<LogUserActivityFilter>();
@@ -39,15 +40,19 @@ if(app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
-
 app.UseRouting();
 
 // Enable CORS for Angular App
 app.UseCors(x => x.AllowAnyHeader()
                   .AllowAnyMethod()
+                  .AllowCredentials()
                   .WithOrigins("http://localhost:4200"));
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseEndpoints(ep => ep.MapControllers());
+
+// SingalR endpoint for online user hub
+app.MapHub<PresenceHub>("hubs/presence");
+
 app.Run();

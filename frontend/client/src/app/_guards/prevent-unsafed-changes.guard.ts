@@ -14,5 +14,4 @@ export class PreventUnsafedChangesGuard implements CanDeactivate<MemberEditCompo
     }
     return true;
   }
-  
 }

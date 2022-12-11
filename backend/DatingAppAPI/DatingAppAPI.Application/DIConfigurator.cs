@@ -12,6 +12,10 @@ namespace DatingAppAPI.Application
         {
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPhotoService, PhotoService>();
+
+            // SignalR
+            services.AddSignalR();
+
             return services;
         }
     }
