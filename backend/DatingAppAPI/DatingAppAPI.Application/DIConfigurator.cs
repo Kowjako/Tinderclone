@@ -1,8 +1,8 @@
 ﻿using DatingAppAPI.Application.Interfaces.Services;
 using DatingAppAPI.Application.ServiceImpl;
+using DatingAppAPI.Application.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json;
 
 namespace DatingAppAPI.Application
 {
@@ -15,6 +15,7 @@ namespace DatingAppAPI.Application
 
             // SignalR
             services.AddSignalR();
+            services.AddSingleton<PresenceTracker>();
 
             return services;
         }
