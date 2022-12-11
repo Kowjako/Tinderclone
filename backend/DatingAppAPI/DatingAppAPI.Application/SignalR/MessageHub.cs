@@ -2,11 +2,13 @@
 using DatingAppAPI.Application.DTO;
 using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace DatingAppAPI.Application.SignalR
 {
+    [Authorize]
     public class MessageHub : Hub
     {
         private readonly IMessageRepository _msgRepo;
@@ -23,6 +25,9 @@ namespace DatingAppAPI.Application.SignalR
         public override async Task OnConnectedAsync()
         {
             var httpContext = Context.GetHttpContext();
+            
+            // For example https://localhost:5001/hubs/message?user='test'
+
             var otherUser = httpContext.Request.Query["user"];
             var username = Context.User.FindFirst(ClaimTypes.Name)?.Value;
 
