@@ -34,14 +34,17 @@ namespace DatingAppAPI.Application.SignalR
             var groupName = GetGroupName(username, otherUser);
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
+            await AddToGroup(groupName);
+
             // Send data to Angular app
             var messages = await _msgRepo.GetMessageThread(username, otherUser);
             await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
-            return base.OnDisconnectedAsync(exception);
+            await RemoveFromGroup();
+            await base.OnDisconnectedAsync(exception);
         }
 
         public async Task SendMessage(CreateMessageDTO dto)
@@ -65,11 +68,18 @@ namespace DatingAppAPI.Application.SignalR
                 Content = dto.Content
             };
 
+            var groupName = GetGroupName(sender.UserName, receiver.UserName);
+            var group = await _msgRepo.GetMessageGroup(groupName);
+
+            if (group.Connections.Any(p => p.Username.Equals(receiver.UserName)))
+            {
+                message.DateRead = DateTime.UtcNow;
+            }
+
             _msgRepo.AddMessage(message);
             if (await _msgRepo.SaveAllAsync())
             {
-                var group = GetGroupName(sender.UserName, receiver.UserName);
-                await Clients.Group(group).SendAsync("NewMessage", _mapper.Map<MessageDTO>(message));
+                await Clients.Group(groupName).SendAsync("NewMessage", _mapper.Map<MessageDTO>(message));
             }
         }
 
@@ -77,6 +87,29 @@ namespace DatingAppAPI.Application.SignalR
         {
             var stringCompare = string.CompareOrdinal(caller, other) < 0;
             return stringCompare ? $"{caller}-{other}" : $"{other}-{caller}";
+        }
+
+        private async Task<bool> AddToGroup(string groupName)
+        {
+            var username = Context.User.FindFirst(ClaimTypes.Name)?.Value;
+            var group = await _msgRepo.GetMessageGroup(groupName);
+            var connection = new Connection(Context.ConnectionId, username);
+
+            if(group == null)
+            {
+                group = new Group(groupName);
+                _msgRepo.AddGroup(group);
+            }
+
+            group.Connections.Add(connection);
+            return await _msgRepo.SaveAllAsync();
+        }
+
+        private async Task<bool> RemoveFromGroup()
+        {
+            var connection = await _msgRepo.GetConnection(Context.ConnectionId);
+            _msgRepo.RemoveConnection(connection);
+            return await _msgRepo.SaveAllAsync();
         }
     }
 }
