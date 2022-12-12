@@ -57,6 +57,13 @@ namespace DatingAppAPI.Persistence.Repositories
                                          .SingleOrDefaultAsync(x => x.UserName.Equals(username));
         }
 
+        public async Task<string> GetUserGender(string username)
+        {
+            return await _dbContext.Users.Where(x => x.UserName.Equals(username))
+                                         .Select(x => x.Gender)
+                                         .FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
         {
             return await _dbContext.Users.Include(p => p.Photos).ToListAsync();
