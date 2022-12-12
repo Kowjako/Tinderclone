@@ -76,25 +76,26 @@ namespace DatingAppAPI.Persistence.Repositories
 
         public async Task<IEnumerable<MessageDTO>> GetMessageThread(string senderName, string receiverName)
         {
-            var messages = await _dbContext.Messages.Include(p => p.Sender).ThenInclude(p => p.Photos)
-                                                    .Include(p => p.Receiver).ThenInclude(p => p.Photos)
-                                                    .Where(m => m.ReceiverUsername == senderName &&
-                                                                !m.ReceiverDeleted &&
-                                                                m.SenderUsername == receiverName ||
-                                                                m.ReceiverUsername == receiverName &&
-                                                                !m.SenderDeleted &&
-                                                                m.SenderUsername == senderName)
-                                                    .OrderBy(m => m.MessageSent)
-                                                    .ToListAsync();
+            var query = _dbContext.Messages.Where(m => m.ReceiverUsername == senderName &&
+                                                       !m.ReceiverDeleted &&
+                                                       m.SenderUsername == receiverName ||
+                                                       m.ReceiverUsername == receiverName &&
+                                                       !m.SenderDeleted &&
+                                                       m.SenderUsername == senderName)
+                                            .OrderBy(m => m.MessageSent)
+                                            .AsQueryable();
 
-            var unreadMsg = messages.Where(p => p.DateRead == null && p.ReceiverUsername == senderName).ToList();
+            var unreadMsg = query.Where(p => p.DateRead == null && p.ReceiverUsername == senderName).ToList();
 
             if (unreadMsg.Any())
             {
                 unreadMsg.ForEach(msg => msg.DateRead = DateTime.UtcNow);
             }
 
-            return _mapper.Map<IEnumerable<MessageDTO>>(messages);
+            /* Korzystamy z projekcji AutoMapper'a wiec Include oraz ThenInclude nie sa potrzebne
+             * bo to sie odbywa po stronie bazy (automatyczne JOIN) */
+
+            return await query.ProjectTo<MessageDTO>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task<Group> GetGroupForConnection(string connectionId)

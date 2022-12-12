@@ -33,12 +33,12 @@ namespace DatingAppAPI.Controllers
         public async Task<ActionResult<PagedList<MemberDTO>>> GetUsers([FromQuery] UserParams param)
         {
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
-            var user = await _uow.UserRepository.GetUserByUsernameAsync(username);
-            param.CurrentUsername = user.UserName;
+            var gender = await _uow.UserRepository.GetUserGender(username);
+            param.CurrentUsername = username;
 
             if(string.IsNullOrEmpty(param.Gender))
             {
-                param.Gender = user.Gender == "male" ? "female" : "male";
+                param.Gender = gender == "male" ? "female" : "male";
             }
 
             var users = await _uow.UserRepository.GetMembersAsync(param);
