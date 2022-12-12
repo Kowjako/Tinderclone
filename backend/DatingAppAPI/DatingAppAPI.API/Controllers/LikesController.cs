@@ -1,5 +1,6 @@
 ﻿using DatingAppAPI.API.Extensions;
 using DatingAppAPI.Application.DTO;
+using DatingAppAPI.Application.Interfaces.Common;
 using DatingAppAPI.Application.Interfaces.Pagination;
 using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Controllers;
@@ -13,13 +14,11 @@ namespace DatingAppAPI.API.Controllers
 {
     public class LikesController : BaseApiController
     {
-        private readonly IUserRepository _userRepo;
-        private ILikesRepository _likeRepo;
+        private readonly IUnitOfWork _uow;
 
-        public LikesController(IUserRepository userRepo, ILikesRepository likeRepo)
+        public LikesController(IUnitOfWork uow)
         {
-            _userRepo = userRepo;
-            _likeRepo = likeRepo;
+            _uow = uow;
         }
 
         [HttpPost("{username}")]
@@ -27,13 +26,13 @@ namespace DatingAppAPI.API.Controllers
         {
             var sourceUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var likedUser = await _userRepo.GetUserByUsernameAsync(username);
-            var sourceUser = await _likeRepo.GetUserWithLikes(int.Parse(sourceUserId));
+            var likedUser = await _uow.UserRepository.GetUserByUsernameAsync(username);
+            var sourceUser = await _uow.LikesRepository.GetUserWithLikes(int.Parse(sourceUserId));
 
             if (likedUser == null) return NotFound();
             if (sourceUser.UserName.Equals(username)) return BadRequest("You cannot like yourself");
 
-            var userLike = await _likeRepo.GetUserLike(int.Parse(sourceUserId), likedUser.Id);
+            var userLike = await _uow.LikesRepository.GetUserLike(int.Parse(sourceUserId), likedUser.Id);
             if (userLike != null) return BadRequest("You already like this user");
 
             userLike = new UserLike()
@@ -43,7 +42,7 @@ namespace DatingAppAPI.API.Controllers
             };
 
             sourceUser.LikedUsers.Add(userLike);
-            if (await _userRepo.SaveAllAsync()) return Ok();
+            if (await _uow.Complete()) return Ok();
             return BadRequest("Failed to like user");
         }
 
@@ -53,7 +52,7 @@ namespace DatingAppAPI.API.Controllers
             var sourceUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             likesParams.UserId = int.Parse(sourceUserId);
 
-            var likes = await _likeRepo.GetUserLikes(likesParams);
+            var likes = await _uow.LikesRepository.GetUserLikes(likesParams);
             Response.AddPaginationHeader(new PaginationHeader(likes.CurrentPage,
                                                               likes.PageSize,
                                                               likes.TotalCount,

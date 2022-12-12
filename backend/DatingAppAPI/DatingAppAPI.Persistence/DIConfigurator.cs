@@ -1,6 +1,8 @@
-﻿using DatingAppAPI.Application.Interfaces.Repositories;
+﻿using DatingAppAPI.Application.Interfaces.Common;
+using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Persistence.Data;
 using DatingAppAPI.Persistence.Repositories;
+using DatingAppAPI.Persistence.Repositories.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,9 +18,7 @@ namespace DatingAppAPI.Persistence
                 opt.UseSqlite(configuration.GetConnectionString("DefaultConnection"));
             });
 
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<ILikesRepository, LikesRepository>();
-            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             return services;

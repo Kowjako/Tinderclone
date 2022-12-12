@@ -92,15 +92,9 @@ namespace DatingAppAPI.Persistence.Repositories
             if (unreadMsg.Any())
             {
                 unreadMsg.ForEach(msg => msg.DateRead = DateTime.UtcNow);
-                await _dbContext.SaveChangesAsync();
             }
 
             return _mapper.Map<IEnumerable<MessageDTO>>(messages);
-        }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _dbContext.SaveChangesAsync() > 0;
         }
 
         public async Task<Group> GetGroupForConnection(string connectionId)

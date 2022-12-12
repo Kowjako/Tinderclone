@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DatingAppAPI.API.Extensions;
 using DatingAppAPI.Application.DTO;
+using DatingAppAPI.Application.Interfaces.Common;
 using DatingAppAPI.Application.Interfaces.Pagination;
 using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Controllers;
@@ -14,15 +15,13 @@ namespace DatingAppAPI.API.Controllers
 {
     public class MessagesController : BaseApiController
     {
-        private readonly IUserRepository _userRepo;
-        private readonly IMessageRepository _msgRepo;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _uow;
 
-        public MessagesController(IUserRepository userRepo, IMessageRepository msgRepo, IMapper mapper)
+        public MessagesController(IUnitOfWork uow, IMapper mapper)
         {
-            _userRepo = userRepo;
-            _msgRepo = msgRepo;
             _mapper = mapper;
+            _uow = uow;
         }
 
         [HttpPost]
@@ -32,8 +31,8 @@ namespace DatingAppAPI.API.Controllers
 
             if (username == dto.ReceiverUsername.ToLower()) return BadRequest("You cannot send message to yourself");
 
-            var sender = await _userRepo.GetUserByUsernameAsync(username);
-            var receiver = await _userRepo.GetUserByUsernameAsync(dto.ReceiverUsername);
+            var sender = await _uow.UserRepository.GetUserByUsernameAsync(username);
+            var receiver = await _uow.UserRepository.GetUserByUsernameAsync(dto.ReceiverUsername);
 
             if (receiver == null) return NotFound();
 
@@ -46,8 +45,8 @@ namespace DatingAppAPI.API.Controllers
                 Content = dto.Content
             };
 
-            _msgRepo.AddMessage(message);
-            if (!await _msgRepo.SaveAllAsync()) return BadRequest("Failed to send message");
+            _uow.MessageRepository.AddMessage(message);
+            if (!await _uow.Complete()) return BadRequest("Failed to send message");
 
             return Ok(_mapper.Map<MessageDTO>(message));
         }
@@ -56,7 +55,7 @@ namespace DatingAppAPI.API.Controllers
         public async Task<ActionResult<PagedList<MessageDTO>>> GetMessagesForUser([FromQuery] MessageParams param)
         {
             param.Username = User.FindFirst(ClaimTypes.Name)?.Value;
-            var msg = await _msgRepo.GetMessagesForUser(param);
+            var msg = await _uow.MessageRepository.GetMessagesForUser(param);
 
             Response.AddPaginationHeader(new PaginationHeader(msg.CurrentPage,
                                                               msg.PageSize,
@@ -65,18 +64,11 @@ namespace DatingAppAPI.API.Controllers
             return Ok(msg);
         }
 
-        [HttpGet("thread/{receiverUsername}")]
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessageThread([FromRoute] string receiverUsername)
-        {
-            var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
-            return Ok(await _msgRepo.GetMessageThread(currentUserName, receiverUsername));
-        }
-
         [HttpDelete("{msgId}")]
         public async Task<ActionResult> DeleteMessage(int msgId)
         {
             var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
-            var message = await _msgRepo.GetMessage(msgId);
+            var message = await _uow.MessageRepository.GetMessage(msgId);
 
             if(message.ReceiverUsername.Equals(currentUserName) ||
                message.SenderUsername.Equals(currentUserName))
@@ -86,10 +78,10 @@ namespace DatingAppAPI.API.Controllers
 
                 if(message.SenderDeleted && message.ReceiverDeleted)
                 {
-                    _msgRepo.DeleteMessage(message);
+                    _uow.MessageRepository.DeleteMessage(message);
                 }
 
-                if(await _msgRepo.SaveAllAsync())
+                if(await _uow.Complete())
                 {
                     return Ok();
                 }
