@@ -1,17 +1,21 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanDeactivate } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { MemberEditComponent } from '../members/member-edit/member-edit.component';
 import { Member } from '../_models/member';
+import { ConfirmService } from '../_services/confirm.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PreventUnsafedChangesGuard implements CanDeactivate<MemberEditComponent> {
-  canDeactivate(component: MemberEditComponent): boolean {
+
+  constructor(private confirmSvc: ConfirmService) {}
+
+  canDeactivate(component: MemberEditComponent): Observable<boolean> {
     if(component.editForm?.dirty) {
-      return confirm('Are you sure you want to continue? Any unsaved changes will be lost.');
+      return this.confirmSvc.confirm();
     }
-    return true;
+    return of(true);
   }
 }
