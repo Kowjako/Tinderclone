@@ -43,7 +43,7 @@ export class MessagesService {
       });
     });
 
-    this.hubConnection.on("UpdateGropup", (group: Group) => {
+    this.hubConnection.on("UpdateGroup", (group: Group) => {
       if(group.connections.some(x => x.username === otherUsername))
       {
         this.messageThread$.pipe(take(1)).subscribe({

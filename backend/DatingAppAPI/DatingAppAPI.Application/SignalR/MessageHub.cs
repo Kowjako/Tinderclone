@@ -37,7 +37,7 @@ namespace DatingAppAPI.Application.SignalR
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
             var group = await AddToGroup(groupName);
-            await Clients.Group(groupName).SendAsync("UpdatedGroup", group);
+            await Clients.Group(groupName).SendAsync("UpdateGroup", group);
 
             // Send data to Angular app
             var messages = await _msgRepo.GetMessageThread(username, otherUser);
