@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
@@ -29,7 +29,7 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   userCircleIcon = faUserCircle;
 
   constructor(private accountService: AccountService, private route: ActivatedRoute, private msgService: MessagesService,
-    public presenceService: PresenceService) {
+    public presenceService: PresenceService, private router: Router) {
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => {
         if (user) {
@@ -37,6 +37,9 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
         }
       }
     });
+
+    /* Zeby przeladowac komponent po klieknieciu tostera o nowej wiadomosci */
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
   ngOnInit(): void {
@@ -102,8 +105,7 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
     if (this.activeTab.heading === 'Messages' && this.user) {
       this.msgService.createHubConnection(this.user, this.member.userName);
     }
-    else
-    {
+    else {
       this.msgService.stopHubConnection();
     }
   }
