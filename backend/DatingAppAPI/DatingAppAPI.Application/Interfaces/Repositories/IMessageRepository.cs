@@ -17,5 +17,6 @@ namespace DatingAppAPI.Application.Interfaces.Repositories
         void RemoveConnection(Connection conn);
         Task<Connection> GetConnection(string connectionId);
         Task<Group> GetMessageGroup(string groupName);
+        Task<Group> GetGroupForConnection(string connectionId);
     }
 }

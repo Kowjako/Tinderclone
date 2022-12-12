@@ -102,5 +102,11 @@ namespace DatingAppAPI.Persistence.Repositories
         {
             return await _dbContext.SaveChangesAsync() > 0;
         }
+
+        public async Task<Group> GetGroupForConnection(string connectionId)
+        {
+            return await _dbContext.Groups.Include(p => p.Connections)
+                                          .FirstOrDefaultAsync(x => x.Connections.Any(c => c.ConnectionId.Equals(connectionId)));
+        }
     }
 }

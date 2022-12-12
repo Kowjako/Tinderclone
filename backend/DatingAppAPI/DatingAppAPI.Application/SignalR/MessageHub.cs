@@ -36,16 +36,18 @@ namespace DatingAppAPI.Application.SignalR
             var groupName = GetGroupName(username, otherUser);
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-            await AddToGroup(groupName);
+            var group = await AddToGroup(groupName);
+            await Clients.Group(groupName).SendAsync("UpdatedGroup", group);
 
             // Send data to Angular app
             var messages = await _msgRepo.GetMessageThread(username, otherUser);
-            await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
+            await Clients.Caller.SendAsync("ReceiveMessageThread", messages);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await RemoveFromGroup();
+            var group = await RemoveFromGroup();
+            await Clients.Group(group.Name).SendAsync("UpdateGroup", group);
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -81,10 +83,10 @@ namespace DatingAppAPI.Application.SignalR
             {
                 /* Pobierz polaczonych uzytkownikow z roznych urzadzen */
                 var connection = await PresenceTracker.GetConnectionsForUser(receiver.UserName);
-                if(connection!= null)
+                if (connection != null)
                 {
                     /* Wyslij notyfikacje kazdemu */
-                    await _presenceHub.Clients.Clients(connection).SendAsync("NewMessageReceived", 
+                    await _presenceHub.Clients.Clients(connection).SendAsync("NewMessageReceived",
                         new { username = sender.UserName, knownAs = sender.KnownAs });
                 }
             }
@@ -103,7 +105,7 @@ namespace DatingAppAPI.Application.SignalR
             return stringCompare ? $"{caller}-{other}" : $"{other}-{caller}";
         }
 
-        private async Task<bool> AddToGroup(string groupName)
+        private async Task<Group> AddToGroup(string groupName)
         {
             var username = Context.User.FindFirst(ClaimTypes.Name)?.Value;
             var group = await _msgRepo.GetMessageGroup(groupName);
@@ -116,14 +118,20 @@ namespace DatingAppAPI.Application.SignalR
             }
 
             group.Connections.Add(connection);
-            return await _msgRepo.SaveAllAsync();
+            if (await _msgRepo.SaveAllAsync())
+                return group;
+            throw new HubException("Failed to add to group");
         }
 
-        private async Task<bool> RemoveFromGroup()
+        private async Task<Group> RemoveFromGroup()
         {
-            var connection = await _msgRepo.GetConnection(Context.ConnectionId);
+            var group = await _msgRepo.GetGroupForConnection(Context.ConnectionId);
+            var connection = group.Connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
             _msgRepo.RemoveConnection(connection);
-            return await _msgRepo.SaveAllAsync();
+
+            if (await _msgRepo.SaveAllAsync())
+                return group;
+            throw new HubException("Failed to remove from group");
         }
     }
 }
