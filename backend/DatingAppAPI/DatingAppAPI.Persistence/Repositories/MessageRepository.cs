@@ -84,7 +84,7 @@ namespace DatingAppAPI.Persistence.Repositories
                                                                 m.ReceiverUsername == receiverName &&
                                                                 !m.SenderDeleted &&
                                                                 m.SenderUsername == senderName)
-                                                    .OrderByDescending(m => m.MessageSent)
+                                                    .OrderBy(m => m.MessageSent)
                                                     .ToListAsync();
 
             var unreadMsg = messages.Where(p => p.DateRead == null && p.ReceiverUsername == senderName).ToList();
