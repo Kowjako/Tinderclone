@@ -20,11 +20,20 @@ namespace DatingAppAPI.Persistence.Repositories
             _mapper = mapper;
         }
 
-        public async Task<MemberDTO> GetMemberAsync(string name)
-        {
-            return await _dbContext.Users.Where(x => x.UserName.Equals(name))
-                                         .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
-                                         .SingleOrDefaultAsync();
+        public async Task<MemberDTO> GetMemberAsync(string name, bool selfRequest)
+        {            
+            var query = _dbContext.Users.Where(x => x.UserName.Equals(name))
+                                        .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
+                                        .AsQueryable();
+
+            /* Uzytkownik widzi swoje (nie cudze) niezatwierdzone zdjecia wiec wylaczymy filtr */
+            if (selfRequest)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+
+            return await query.FirstOrDefaultAsync();
+
         }
 
         public async Task<PagedList<MemberDTO>> GetMembersAsync(UserParams param)

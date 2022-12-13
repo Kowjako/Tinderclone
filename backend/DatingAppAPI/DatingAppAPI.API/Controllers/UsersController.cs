@@ -50,7 +50,8 @@ namespace DatingAppAPI.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDTO>> GetUserById([FromRoute]string username)
         {
-            return await _uow.UserRepository.GetMemberAsync(username);
+            var selfRequest = User.FindFirst(ClaimTypes.Name)?.Value.Equals(username);
+            return await _uow.UserRepository.GetMemberAsync(username, selfRequest);
         }
 
         [HttpPut]
