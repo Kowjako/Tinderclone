@@ -25,6 +25,9 @@ namespace DatingAppAPI.Persistence
             CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Utc));
             CreateMap<DateTime?, DateTime?>().ConvertUsing(d => d.HasValue ? DateTime.SpecifyKind(d.Value, DateTimeKind.Utc)
                                                                            : null);
+
+            CreateMap<Photo, PhotoForApprovalDTO>()
+                .ForMember(p => p.Username, c => c.MapFrom(src => src.AppUser.UserName));
         }
     }
 }

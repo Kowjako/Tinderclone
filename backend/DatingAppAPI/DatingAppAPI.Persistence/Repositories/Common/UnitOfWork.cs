@@ -22,6 +22,8 @@ namespace DatingAppAPI.Persistence.Repositories.Common
 
         public ILikesRepository LikesRepository => new LikesRepository(_context);
 
+        public IPhotoRepository PhotoRepository => new PhotoRepository();
+
         public async Task<bool> Complete() => await _context.SaveChangesAsync() > 0;
 
         public bool HasChanges() => _context.ChangeTracker.HasChanges();
