@@ -1,4 +1,8 @@
-﻿using DatingAppAPI.Controllers;
+﻿using AutoMapper;
+using DatingAppAPI.Application.DTO;
+using DatingAppAPI.Application.Interfaces.Common;
+using DatingAppAPI.Application.Interfaces.Services;
+using DatingAppAPI.Controllers;
 using DatingAppAPI.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,10 +17,16 @@ namespace DatingAppAPI.API.Controllers
     public class AdminController : BaseApiController
     {
         private readonly UserManager<AppUser> _userMngr;
+        private readonly IUnitOfWork _uow;
+        private readonly IMapper _mapper;
+        private readonly IPhotoService _phService;
 
-        public AdminController(UserManager<AppUser> userMngr)
+        public AdminController(IUnitOfWork uow, UserManager<AppUser> userMngr, IMapper mapper, IPhotoService phService)
         {
             _userMngr = userMngr;
+            _uow = uow;
+            _mapper = mapper;
+            _phService = phService;
         }
 
         [Authorize(Policy = "RequireAdminRole")]
@@ -34,7 +44,7 @@ namespace DatingAppAPI.API.Controllers
             return Ok(users);
         }
 
-        [Authorize(Policy="RequireAdminRole")]
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPut("edit-roles/{username}")]
         public async Task<ActionResult<List<string>>> EditRoles([FromRoute] string username, [FromQuery] string roles)
         {
@@ -55,11 +65,48 @@ namespace DatingAppAPI.API.Controllers
             return Ok(await _userMngr.GetRolesAsync(user));
         }
 
+
         [Authorize(Policy = "ModeratePhotoRole")]
-        [HttpGet("photos-to-moderate")]
-        public ActionResult GetPhotosForModeration()
+        [HttpGet("photos-to-approval")]
+        public async Task<ActionResult<IEnumerable<PhotoForApprovalDTO>>> GetPhotosForApproval()
         {
-            return Ok("Admin or moderators can see this");
+            return Ok(await _uow.PhotoRepository.GetUnapprovedPhotos());
+        }
+
+        [Authorize(Policy = "ModeratePhotoRole")]
+        [HttpPut("approve-photo/{photoId}")]
+        public async Task<ActionResult<PhotoDTO>> ApprovePhoto([FromRoute] int photoId)
+        {
+            var photo = await _uow.PhotoRepository.GetPhotoById(photoId);
+            photo.IsApproved = true;
+
+            if (!await _uow.Complete()) return BadRequest("Fail to change photo status");
+            return _mapper.Map<PhotoDTO>(photo);
+        }
+
+        [Authorize(Policy = "ModeratePhotoRole")]
+        [HttpPut("reject-photo/{photoId}")]
+        public async Task<ActionResult<PhotoDTO>> RejectPhoto([FromRoute] int photoId)
+        {
+            var photo = await _uow.PhotoRepository.GetPhotoById(photoId);
+
+
+            if(photo.PublicId != null)
+            {
+                /* Remove from Cloudinary */
+                var result = await _phService.DeletePhotoAsync(photo.PublicId);
+                if(result.Result.Equals("ok"))
+                {
+                    _uow.PhotoRepository.DeletePhoto(photo);
+                }
+            }
+            else
+            {
+                _uow.PhotoRepository.DeletePhoto(photo);
+            }
+
+            if (!await _uow.Complete()) return BadRequest("Fail to change photo status");
+            return _mapper.Map<PhotoDTO>(photo);
         }
     }
 }
