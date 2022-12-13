@@ -78,7 +78,13 @@ namespace DatingAppAPI.API.Controllers
         public async Task<ActionResult<PhotoDTO>> ApprovePhoto([FromRoute] int photoId)
         {
             var photo = await _uow.PhotoRepository.GetPhotoById(photoId);
+
+            if (photo == null) return NotFound("Could not find photo");
+
             photo.IsApproved = true;
+
+            var user = await _uow.UserRepository.GetUserByPhotoId(photoId);
+            if (!user.Photos.Any(p => p.IsMain)) photo.IsMain = true;
 
             if (!await _uow.Complete()) return BadRequest("Fail to change photo status");
             return _mapper.Map<PhotoDTO>(photo);
