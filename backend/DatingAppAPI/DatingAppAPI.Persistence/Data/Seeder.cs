@@ -30,6 +30,7 @@ namespace DatingAppAPI.Persistence.Data
             foreach (var user in users)
             {
                 user.UserName = user.UserName.ToLower();
+                user.Photos.First().IsApproved = true;
 
                 await mngr.CreateAsync(user, "Pa$$w0rd");
                 await mngr.AddToRoleAsync(user, "Member");
