@@ -26,6 +26,11 @@ namespace DatingAppAPI.Middlewares
             {
                 await next(context);
             }
+            catch (DatingException ex)
+            {
+                context.Response.StatusCode = ex.StatusCode;
+                await context.Response.WriteAsync(ex.Message);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
