@@ -96,7 +96,6 @@ namespace DatingAppAPI.API.Controllers
         {
             var photo = await _uow.PhotoRepository.GetPhotoById(photoId);
 
-
             if(photo.PublicId != null)
             {
                 /* Remove from Cloudinary */
