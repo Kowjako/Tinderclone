@@ -33,6 +33,7 @@ namespace DatingAppAPI.Persistence.Repositories
         {
             var list = await _dbContext.Photos.IgnoreQueryFilters()
                                               .Where(p => !p.IsApproved)
+                                              .Include(p => p.AppUser)
                                               .ToListAsync();
 
             return _mapper.Map<List<PhotoForApprovalDTO>>(list);

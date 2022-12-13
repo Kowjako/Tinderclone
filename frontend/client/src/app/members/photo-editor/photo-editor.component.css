@@ -5,3 +5,20 @@
 input[type=file] {
     color: transparent;
 }
+
+.not-approved {
+    opacity: 0.2;
+}
+
+.img-wrapper {
+    position: relative;
+}
+
+/* skoro img-wrapper jest rodzicem z relative
+to tu wstawiamy absolute i regulujemy wewnatrz rodzica (img-wrapper) */
+.img-text {
+    position: absolute;
+    bottom: 52%;
+    left: 18%;
+    transform: rotate(45deg);
+}

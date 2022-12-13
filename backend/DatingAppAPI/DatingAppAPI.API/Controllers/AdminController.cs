@@ -112,7 +112,7 @@ namespace DatingAppAPI.API.Controllers
             }
 
             if (!await _uow.Complete()) return BadRequest("Fail to change photo status");
-            return _mapper.Map<PhotoDTO>(photo);
+            return NoContent();
         }
     }
 }
