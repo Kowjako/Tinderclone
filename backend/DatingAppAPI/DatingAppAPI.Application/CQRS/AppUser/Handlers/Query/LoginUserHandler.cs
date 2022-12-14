@@ -23,7 +23,7 @@ namespace DatingAppAPI.Application.CQRS.AppUser.Handlers.Query
         public async Task<UserDTO> Handle(LoginUserRequest request, CancellationToken cancellationToken)
         {
             var user = await _userMngr.Users.Include(p => p.Photos)
-                                            .SingleOrDefaultAsync(x => x.UserName.Equals(request.LoginDTO.Username));
+                                            .SingleOrDefaultAsync(x => x.UserName.Equals(request.LoginDTO.Username), CancellationToken.None);
 
             if (user == null) throw new HttpException(401, "Invalid username");
 
