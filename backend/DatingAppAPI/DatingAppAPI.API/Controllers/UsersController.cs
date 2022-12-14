@@ -94,7 +94,7 @@ namespace DatingAppAPI.Controllers
                 PhotoId = photoId
             });
 
-            if(result)
+            if (result)
             {
                 return NoContent();
             }

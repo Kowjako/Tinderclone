@@ -28,7 +28,7 @@ namespace DatingAppAPI.Extensions
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(opt =>
-                    {   
+                    {
                         opt.TokenValidationParameters = new TokenValidationParameters()
                         {
                             ValidateIssuerSigningKey = true,

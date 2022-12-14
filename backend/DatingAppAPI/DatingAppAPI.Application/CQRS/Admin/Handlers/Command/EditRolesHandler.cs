@@ -17,7 +17,7 @@ namespace DatingAppAPI.Application.CQRS.Admin.Handlers.Command
 
         public async Task<IEnumerable<string>> Handle(EditRolesRequest request, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(request.Roles)) 
+            if (string.IsNullOrWhiteSpace(request.Roles))
                 throw new HttpException(400, "You must select at least one role");
 
             var selectedRoles = request.Roles.Split(",");

@@ -17,14 +17,14 @@ namespace DatingAppAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDTO>> Register([FromBody]RegisterDTO registerDTO)
+        public async Task<ActionResult<UserDTO>> Register([FromBody] RegisterDTO registerDTO)
         {
             var result = await _mediatR.Send(new RegisterUserRequest() { RegisterDTO = registerDTO });
             return Ok(result);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDTO>> Login([FromBody]LoginDTO loginDTO)
+        public async Task<ActionResult<UserDTO>> Login([FromBody] LoginDTO loginDTO)
         {
             var result = await _mediatR.Send(new LoginUserRequest() { LoginDTO = loginDTO });
             return Ok(result);

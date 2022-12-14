@@ -40,7 +40,7 @@ namespace DatingAppAPI.Application.CQRS.AppUser.Handlers.Command
 
             user.Photos.Add(photo);
 
-            if(await _uow.Complete())
+            if (await _uow.Complete())
             {
                 return _mapper.Map<PhotoDTO>(photo);
             }

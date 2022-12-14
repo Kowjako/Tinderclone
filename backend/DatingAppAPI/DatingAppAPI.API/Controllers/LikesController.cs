@@ -2,7 +2,6 @@
 using DatingAppAPI.Application.CQRS.UserLike.Requests.Command;
 using DatingAppAPI.Application.CQRS.UserLike.Requests.Query;
 using DatingAppAPI.Application.DTO;
-using DatingAppAPI.Application.Interfaces.Common;
 using DatingAppAPI.Application.Interfaces.Pagination;
 using DatingAppAPI.Controllers;
 using MediatR;
@@ -31,7 +30,7 @@ namespace DatingAppAPI.API.Controllers
                 Username = username,
                 SourceUserId = int.Parse(sourceUserId)
             });
-            
+
             return Ok();
         }
 

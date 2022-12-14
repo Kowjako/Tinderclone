@@ -25,7 +25,7 @@ namespace DatingAppAPI.Application.CQRS.AppUser.Handlers.Command
 
         public async Task<UserDTO> Handle(RegisterUserRequest request, CancellationToken cancellationToken)
         {
-            if (await UserExists(request.RegisterDTO.Username)) 
+            if (await UserExists(request.RegisterDTO.Username))
                 throw new HttpException(400, "Username is taken");
 
             var user = _mapper.Map<AppU>(request.RegisterDTO);
