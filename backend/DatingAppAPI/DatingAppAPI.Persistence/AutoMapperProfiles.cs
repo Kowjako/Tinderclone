@@ -28,6 +28,9 @@ namespace DatingAppAPI.Persistence
 
             CreateMap<Photo, PhotoForApprovalDTO>()
                 .ForMember(p => p.Username, c => c.MapFrom(src => src.AppUser.UserName));
+
+            CreateMap<AppUser, UserWithRoleDTO>()
+                .ForMember(p => p.Roles, c => c.MapFrom(src => src.UserRoles.Select(p => p.Role.Name)));
         }
     }
 }

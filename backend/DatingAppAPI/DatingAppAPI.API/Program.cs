@@ -30,7 +30,7 @@ var app = builder.Build();
 
 /* Http Request Pipeline */
 
-if(app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();

@@ -21,7 +21,7 @@ namespace DatingAppAPI.Persistence.Repositories
         }
 
         public async Task<MemberDTO> GetMemberAsync(string name, bool selfRequest)
-        {            
+        {
             var query = _dbContext.Users.Where(x => x.UserName.Equals(name))
                                         .ProjectTo<MemberDTO>(_mapper.ConfigurationProvider)
                                         .AsQueryable();

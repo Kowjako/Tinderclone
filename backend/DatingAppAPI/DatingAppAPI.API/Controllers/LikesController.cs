@@ -1,12 +1,11 @@
 ﻿using DatingAppAPI.API.Extensions;
+using DatingAppAPI.Application.CQRS.UserLike.Requests.Command;
+using DatingAppAPI.Application.CQRS.UserLike.Requests.Query;
 using DatingAppAPI.Application.DTO;
-using DatingAppAPI.Application.Interfaces.Common;
 using DatingAppAPI.Application.Interfaces.Pagination;
-using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Controllers;
-using DatingAppAPI.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -14,11 +13,11 @@ namespace DatingAppAPI.API.Controllers
 {
     public class LikesController : BaseApiController
     {
-        private readonly IUnitOfWork _uow;
+        private readonly IMediator _mediatR;
 
-        public LikesController(IUnitOfWork uow)
+        public LikesController(IMediator mediatr)
         {
-            _uow = uow;
+            _mediatR = mediatr;
         }
 
         [HttpPost("{username}")]
@@ -26,38 +25,30 @@ namespace DatingAppAPI.API.Controllers
         {
             var sourceUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var likedUser = await _uow.UserRepository.GetUserByUsernameAsync(username);
-            var sourceUser = await _uow.LikesRepository.GetUserWithLikes(int.Parse(sourceUserId));
-
-            if (likedUser == null) return NotFound();
-            if (sourceUser.UserName.Equals(username)) return BadRequest("You cannot like yourself");
-
-            var userLike = await _uow.LikesRepository.GetUserLike(int.Parse(sourceUserId), likedUser.Id);
-            if (userLike != null) return BadRequest("You already like this user");
-
-            userLike = new UserLike()
+            await _mediatR.Send(new AddLikeRequest()
             {
-                SourceUserId = int.Parse(sourceUserId),
-                TargetUserId = likedUser.Id
-            };
+                Username = username,
+                SourceUserId = int.Parse(sourceUserId)
+            });
 
-            sourceUser.LikedUsers.Add(userLike);
-            if (await _uow.Complete()) return Ok();
-            return BadRequest("Failed to like user");
+            return Ok();
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedList<LikeDTO>>> GetUserLikes([FromQuery] LikeParams likesParams)
         {
             var sourceUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            likesParams.UserId = int.Parse(sourceUserId);
 
-            var likes = await _uow.LikesRepository.GetUserLikes(likesParams);
+            var likes = await _mediatR.Send(new GetUserLikesRequest()
+            {
+                Params = likesParams,
+                UserId = sourceUserId
+            });
+
             Response.AddPaginationHeader(new PaginationHeader(likes.CurrentPage,
                                                               likes.PageSize,
                                                               likes.TotalCount,
                                                               likes.TotalPages));
-
             return Ok(likes);
         }
     }
