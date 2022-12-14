@@ -27,12 +27,12 @@ namespace DatingAppAPI.Persistence.Repositories
             var users = _dbContext.Users.OrderBy(i => i.UserName).AsQueryable();
             var likes = _dbContext.Likes.AsQueryable();
 
-            if(param.Predicate.Equals("liked"))
+            if (param.Predicate.Equals("liked"))
             {
                 likes = likes.Where(p => p.SourceUserId == param.UserId);
                 users = likes.Select(l => l.TargetUser);
             }
-            else if(param.Predicate.Equals("likedBy"))
+            else if (param.Predicate.Equals("likedBy"))
             {
                 likes = likes.Where(p => p.TargetUserId == param.UserId);
                 users = likes.Select(l => l.SourceUser);
