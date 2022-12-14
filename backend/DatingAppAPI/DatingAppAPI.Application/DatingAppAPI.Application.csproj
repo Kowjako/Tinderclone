@@ -24,8 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CQRS\Admin\Handlers\Command\" />
-    <Folder Include="CQRS\Admin\Requests\Command\" />
     <Folder Include="CQRS\Message\" />
     <Folder Include="CQRS\Member\" />
     <Folder Include="CQRS\UserLike\" />
