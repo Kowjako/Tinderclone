@@ -1,13 +1,11 @@
-﻿using AutoMapper;
-using DatingAppAPI.API.Extensions;
+﻿using DatingAppAPI.API.Extensions;
+using DatingAppAPI.Application.CQRS.Message.Requests.Command;
+using DatingAppAPI.Application.CQRS.Message.Requests.Query;
 using DatingAppAPI.Application.DTO;
-using DatingAppAPI.Application.Interfaces.Common;
 using DatingAppAPI.Application.Interfaces.Pagination;
-using DatingAppAPI.Application.Interfaces.Repositories;
 using DatingAppAPI.Controllers;
-using DatingAppAPI.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -15,13 +13,11 @@ namespace DatingAppAPI.API.Controllers
 {
     public class MessagesController : BaseApiController
     {
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _uow;
+        private readonly IMediator _mediatR;
 
-        public MessagesController(IUnitOfWork uow, IMapper mapper)
+        public MessagesController(IMediator mediator)
         {
-            _mapper = mapper;
-            _uow = uow;
+            _mediatR = mediator;
         }
 
         [HttpPost]
@@ -29,33 +25,24 @@ namespace DatingAppAPI.API.Controllers
         {
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
 
-            if (username == dto.ReceiverUsername.ToLower()) return BadRequest("You cannot send message to yourself");
-
-            var sender = await _uow.UserRepository.GetUserByUsernameAsync(username);
-            var receiver = await _uow.UserRepository.GetUserByUsernameAsync(dto.ReceiverUsername);
-
-            if (receiver == null) return NotFound();
-
-            var message = new Message
+            var result = await _mediatR.Send(new CreateMessageRequest()
             {
-                Sender = sender,
-                Receiver = receiver,
-                SenderUsername = sender.UserName,
-                ReceiverUsername = receiver.UserName,
-                Content = dto.Content
-            };
+                CreateMessageDTO = dto,
+                Username = username
+            });
 
-            _uow.MessageRepository.AddMessage(message);
-            if (!await _uow.Complete()) return BadRequest("Failed to send message");
-
-            return Ok(_mapper.Map<MessageDTO>(message));
+            return Ok(result);
         }
 
         [HttpGet]
         public async Task<ActionResult<PagedList<MessageDTO>>> GetMessagesForUser([FromQuery] MessageParams param)
         {
             param.Username = User.FindFirst(ClaimTypes.Name)?.Value;
-            var msg = await _uow.MessageRepository.GetMessagesForUser(param);
+
+            var msg = await _mediatR.Send(new GetMessagesForUserRequest()
+            {
+                Params = param
+            });
 
             Response.AddPaginationHeader(new PaginationHeader(msg.CurrentPage,
                                                               msg.PageSize,
@@ -68,29 +55,14 @@ namespace DatingAppAPI.API.Controllers
         public async Task<ActionResult> DeleteMessage(int msgId)
         {
             var currentUserName = User.FindFirst(ClaimTypes.Name)?.Value;
-            var message = await _uow.MessageRepository.GetMessage(msgId);
 
-            if(message.ReceiverUsername.Equals(currentUserName) ||
-               message.SenderUsername.Equals(currentUserName))
+            await _mediatR.Send(new DeleteMessageRequest()
             {
-                if (message.SenderUsername.Equals(currentUserName)) message.SenderDeleted = true;
-                if (message.ReceiverUsername.Equals(currentUserName)) message.ReceiverDeleted = true;
+                Username = currentUserName,
+                MessageId = msgId
+            });
 
-                if(message.SenderDeleted && message.ReceiverDeleted)
-                {
-                    _uow.MessageRepository.DeleteMessage(message);
-                }
-
-                if(await _uow.Complete())
-                {
-                    return Ok();
-                }
-                return BadRequest("Problem deleting the message");
-            }
-            else
-            {
-                return Unauthorized();
-            }
+            return NoContent();
         }
     }
 }
