@@ -1,11 +1,8 @@
-﻿using AutoMapper;
-using DatingAppAPI.API.Extensions;
+﻿using DatingAppAPI.API.Extensions;
 using DatingAppAPI.Application.CQRS.AppUser.Requests.Command;
 using DatingAppAPI.Application.CQRS.AppUser.Requests.Query;
 using DatingAppAPI.Application.DTO;
-using DatingAppAPI.Application.Interfaces.Common;
 using DatingAppAPI.Application.Interfaces.Pagination;
-using DatingAppAPI.Application.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,16 +15,10 @@ namespace DatingAppAPI.Controllers
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly IUnitOfWork _uow;
-        private readonly IMapper _mapper;
-        private readonly IPhotoService _photoService;
         private readonly IMediator _mediatR;
 
-        public UsersController(IUnitOfWork uow, IMapper mapper, IPhotoService photoService, IMediator mediatr)
+        public UsersController(IMediator mediatr)
         {
-            _uow = uow;
-            _mapper = mapper;
-            _photoService = photoService;
             _mediatR = mediatr;
         }
 
@@ -122,7 +113,7 @@ namespace DatingAppAPI.Controllers
                 PhotoId = photoId
             });
 
-            return Ok();
+            return NoContent();
         }
     }
 }
