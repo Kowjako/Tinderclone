@@ -16,6 +16,8 @@ namespace DatingAppAPI.Extensions
             using var scope = app.Services.CreateScope();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+            var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+            await context.Database.MigrateAsync();
             await Seeder.SeedUsers(userManager, roleManager);
 
             // Clear Connections on API restart

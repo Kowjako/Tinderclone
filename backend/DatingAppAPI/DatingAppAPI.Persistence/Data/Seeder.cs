@@ -1,7 +1,6 @@
 ﻿using DatingAppAPI.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics.Metrics;
 using System.Text.Json;
 
 namespace DatingAppAPI.Persistence.Data
