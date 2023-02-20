@@ -26,7 +26,7 @@ I wiele innych :)
 
 ## Jak zainstalować
 1️⃣ Pobrać kod źrodłowy backend + frontend  
-2️⃣ Wykreować baze (**update-database** wewnątrz Package Manager Console) i uruchomić API do seedowania danych.  
+2️⃣ Uruchomić API (automatycznie zrobi migrację bazy SQLite).  
 3️⃣ Uruchomić stronę kliencką: ng serve  
 
 ## Screenshoty
